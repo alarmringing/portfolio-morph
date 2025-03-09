@@ -1,0 +1,205 @@
+@font-face {
+  font-family: 'NotoSerifCJK';
+  src: url('/fonts/NotoSerifCJKjp-Black.otf') format('opentype');
+  font-weight: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'NotoSansCJK';
+  src: url('/fonts/NotoSansCJK-VF.otf.ttc') format('opentype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TurretRoad';
+  src: url('/fonts/TurretRoad-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TurretRoad';
+  src: url('/fonts/TurretRoad-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TurretRoad';
+  src: url('/fonts/TurretRoad-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TurretRoad';
+  src: url('/fonts/TurretRoad-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TurretRoad';
+  src: url('/fonts/TurretRoad-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TurretRoad';
+  src: url('/fonts/TurretRoad-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PottaOne';
+  src: url('/fonts/PottaOne-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BagelFatOne';
+  src: url('/fonts/BagelFatOne-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Taviraj';
+  src: url('/fonts/Taviraj-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BodoniModa';
+  src: url('/fonts/BodoniModa-VariableFont_opsz,wght.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gloock';
+  src: url('/fonts/Gloock-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-ExtraLightItalic.ttf') format('truetype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kodchasan';
+  src: url('/fonts/Kodchasan-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+} 
+
+@font-face {
+    font-family: 'Doto';
+    src: url('/fonts/Doto-VariableFont_ROND,wght.ttf') format('truetype-variations');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

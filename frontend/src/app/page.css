@@ -1,0 +1,31 @@
+/* Basic styling for full-page layout */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Container for the full gradient background */
+.gradient-background {
+  /* Create a linear gradient from light to dark gray that spans the entire height */
+  background: linear-gradient(to bottom, #abababd2, #000000d0), url(https://grainy-gradients.vercel.app/noise.svg);
+  
+} 
+
+.navbar-text {
+  font-weight: 1000;
+  font-size: 4rem;
+  color: #0800ff;
+}
+
+.content-text {
+  font-weight: 200;
+}
+
+.cjk-font {
+  font-family: 'NotoSansCJK', sans-serif;
+}
+
+.latin-font {
+  font-family: 'Doto', sans-serif;
+}
