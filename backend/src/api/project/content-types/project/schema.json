@@ -4,7 +4,8 @@
   "info": {
     "singularName": "project",
     "pluralName": "projects",
-    "displayName": "Projects"
+    "displayName": "Projects",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -14,27 +15,39 @@
       "type": "string"
     },
     "Thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "Media": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": true
+      ]
     },
     "Description": {
       "type": "blocks"
+    },
+    "Type": {
+      "type": "enumeration",
+      "enum": [
+        "Interactive",
+        "Static",
+        "Fashion",
+        "Engineering",
+        "Computer Music"
+      ]
     }
   }
 }

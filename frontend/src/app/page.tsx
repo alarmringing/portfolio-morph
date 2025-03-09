@@ -120,7 +120,7 @@ export default function Home() {
         <div className="h-screen" />
 
         {/* content */}
-        <div className="relative z-10 bg-transparent backdrop-blur-sm p-8"> 
+        <div className="relative z-10 bg-transparent p-8"> 
         <section ref={aboutRef} className="min-h-screen ">
           <div className="max-w-4xl mx-auto pt-20">
             {aboutData ? (
