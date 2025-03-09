@@ -41,6 +41,6 @@ export function isCJKGlyph(glyphType: GlyphType): boolean {
          glyphType === GlyphType.K;
 }
 
-export function getTextClass(text: string): string {
-  return isCJKText(text) ? 'cj-font' : 'latin-font';
+export function getTextGlyphClass(text: string): string {
+  return isCJKText(text) ? 'cjk-font' : 'latin-font';
 }

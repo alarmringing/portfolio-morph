@@ -1,8 +1,15 @@
 'use client'
 
-import { ReactNode } from 'react';
+import { ReactNode, createElement } from 'react';
 import { TextNode, LinkNode, ParagraphNode } from '@/lib/types/ParagraphNode';
-import { getTextClass } from '@/app/utils/textUtils';
+import { getTextGlyphClass   } from '@/app/utils/textUtils';
+
+interface HeadingNode {
+  type: 'heading';
+  children: TextNode[];
+  level: number;
+}
+
 export const renderTextNode = (node: TextNode): string => {
   return node.text;
 };
@@ -20,6 +27,20 @@ export const renderLinkNode = (node: LinkNode): ReactNode => {
   );
 };
 
+export const renderHeadingNode = (node: HeadingNode): ReactNode => {
+  const fullText = node.children.map(child => child.text).join('');
+  
+  return createElement(
+    `h${node.level}`,
+    { className: `mb-6 ${getTextGlyphClass(fullText)}` },
+    node.children.map((child, index) => (
+      <span key={index} className="header-text">
+        {renderTextNode(child)}
+      </span>
+    ))
+  );
+};
+
 export const renderParagraphNode = (node: ParagraphNode): ReactNode => {
   // Get the combined text content of all children
   const fullText = node.children
@@ -28,7 +49,7 @@ export const renderParagraphNode = (node: ParagraphNode): ReactNode => {
     .join('');
 
   return (
-    <p className={`mb-4 ${getTextClass(fullText)}`} >
+    <p className={`mb-4 ${getTextGlyphClass(fullText)}`} >
       {node.children.map((child, index) => (
         <span key={index}>
           {child.type === 'text' ? renderTextNode(child) : renderLinkNode(child)}
@@ -38,7 +59,7 @@ export const renderParagraphNode = (node: ParagraphNode): ReactNode => {
   );
 };
 
-export const renderNode = (node: TextNode | LinkNode | ParagraphNode): ReactNode => {
+export const renderNode = (node: TextNode | LinkNode | ParagraphNode | HeadingNode): ReactNode => {
   switch (node.type) {
     case 'text':
       return renderTextNode(node);
@@ -46,5 +67,7 @@ export const renderNode = (node: TextNode | LinkNode | ParagraphNode): ReactNode
       return renderLinkNode(node);
     case 'paragraph':
       return renderParagraphNode(node);
+    case 'heading':
+      return renderHeadingNode(node);
   }
 }; 
