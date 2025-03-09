@@ -8,18 +8,38 @@ html, body {
 /* Container for the full gradient background */
 .gradient-background {
   /* Create a linear gradient from light to dark gray that spans the entire height */
-  background: linear-gradient(to bottom, #abababd2, #000000d0), url(https://grainy-gradients.vercel.app/noise.svg);
+  background: linear-gradient(to bottom, 
+  #ababab00 0%,      /* Start fully transparent light gray */
+  #c5c5c58f 20%,     /* Mid-gray with some transparency */
+  #000000d0 30%,     /* Become black at middle */
+  #000000d0 100%     /* Stay black till end */
+), url(https://grainy-gradients.vercel.app/noise.svg);
   
 } 
 
+a {
+  color: #ff0000;
+  text-decoration: none;
+}
+
+.header-text {
+  font-size: 2rem;
+  font-weight: 100;
+}
+
 .navbar-text {
   font-weight: 1000;
-  font-size: 4rem;
-  color: #0800ff;
+  font-size: 1.5rem;
+  color: #000000;
 }
 
 .content-text {
-  font-weight: 200;
+  font-weight: 100;
+  color: #ffffff;
+}
+
+#a {
+  color: #ffffff;
 }
 
 .cjk-font {
@@ -27,5 +47,5 @@ html, body {
 }
 
 .latin-font {
-  font-family: 'Doto', sans-serif;
+  font-family: 'Syne', sans-serif;
 }

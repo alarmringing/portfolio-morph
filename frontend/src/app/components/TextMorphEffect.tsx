@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import styles from './TextMorphEffect.module.css'
 import { isCJKText, classifyGlyph, GlyphType, isCJKGlyph } from '../utils/textUtils';
 
@@ -6,16 +6,18 @@ import { isCJKText, classifyGlyph, GlyphType, isCJKGlyph } from '../utils/textUt
 interface TextItem {
   text: string;
   font?: string;
+  glyphType: GlyphType;  // Add GlyphType to the interface
 }
 
 interface TextMorphEffectProps {
-  texts: (string | TextItem)[];  // Can accept strings or TextItem objects
+  texts: TextItem[];  // Now only accepts TextItem objects with required glyphType
   className?: string;
   morphTime?: number;
   cooldownTime?: number;
-  width?: number; // Width as percentage of screen width
-  defaultFont?: string; // Default font to use when not specified
-  isPortrait?: boolean; // Whether the device is in portrait mode
+  width?: number;
+  defaultFont?: string;
+  isPortrait?: boolean;
+  threshold?: number;
 }
 
 export default function TextMorphEffect({ 
@@ -23,30 +25,34 @@ export default function TextMorphEffect({
   className = '',
   morphTime = 2,
   cooldownTime = 0.1,
-  width = 80, // Default to 80% of screen width
-  defaultFont = 'NotoSerifCJK, serif', // Default font
-  isPortrait = false // Default to landscape mode
+  width = 80,
+  defaultFont = 'NotoSerifCJK, serif',
+  isPortrait = false,
+  threshold = -140,
 }: TextMorphEffectProps) {
   const text0Ref = useRef<HTMLSpanElement>(null);
   const text1Ref = useRef<HTMLSpanElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const animationState = useRef({
+    textIndex: 0,
+    time: new Date(),
+    morph: 0,
+    cooldown: cooldownTime,
+  });
   
-  // Normalize texts to TextItem objects
-  const normalizedTexts = texts.map(item => 
-    typeof item === 'string' ? { text: item, font: defaultFont } : { ...item, font: item.font || defaultFont }
-  );
+  // Normalize texts to ensure font is set
+  const normalizedTexts = texts.map(item => ({
+    ...item,
+    font: item.font || defaultFont
+  }));
   
   useEffect(() => {
     if (normalizedTexts.length < 2) return; // Need at least 2 texts to morph
     
-    let textIndex = 0;
-    let time = new Date();
-    let morph = 0;
-    let cooldown = cooldownTime;
     let animationId: number | null = null;
 
     function verticalTextStyle(glyphType: GlyphType) {
-      var style = { writingMode: 'horizontal-tb', letterSpacing: '0px' }
+      var style = { writingMode: 'horizontal-tb', letterSpacing: '0px', top: '0'}
       if (isPortrait) {
         style = {...style, writingMode: 'vertical-rl' }
         if (glyphType === GlyphType.L) {
@@ -55,11 +61,20 @@ export default function TextMorphEffect({
           style =  {...style , textOrientation: 'upright'};
         }
         if (glyphType === GlyphType.K) {
-          style = {...style, letterSpacing: '-0.4em'};
+          style = {...style, letterSpacing: '-0.4em', top: '-0.2em'};
         }
       }
       return style;
     }
+
+    // For dynamic sizing, use the container's font size to fill the width
+    const baseFontSize = (isPortrait: boolean, glyphType: GlyphType) => {
+      return {
+        fontSize: isPortrait
+          ? `${width / 3 * (isCJKGlyph(glyphType) ? 1.3 : 1)}vh` // In portrait, use height percentage
+          : `${width / 2.6 * (isCJKGlyph(glyphType) ? 1.3 : 1)}vw`  // In landscape, use width percentage
+      };
+    };
 
     // Function to apply text styles
     function applyTextStyles(currentText: TextItem, nextText: TextItem) {
@@ -72,19 +87,9 @@ export default function TextMorphEffect({
       text1Ref.current.textContent = nextText.text;
       text1Ref.current.style.fontFamily = nextText.font || defaultFont;
       
-      // Apply vertical text styles
-      const text0Glyph = classifyGlyph(currentText.text);
-      const text1Glyph = classifyGlyph(nextText.text);
-
-      // For dynamic sizing, use the container's font size to fill the width
-      const baseFontSize = (isPortrait: boolean, textGlyph: GlyphType) => {
-        return isPortrait
-          ? { fontSize: `${width / 3 * (isCJKGlyph(textGlyph) ? 1.3 : 1)}vh` } // In portrait, use height percentage
-          : { fontSize: `${width / 2.6 * (isCJKGlyph(textGlyph) ? 1.3 : 1)}vw` };  // In landscape, use width percentage
-      }
-
-      const text0Style = {...verticalTextStyle(text0Glyph), ...baseFontSize(isPortrait, text0Glyph)};
-      const text1Style = {...verticalTextStyle(text1Glyph), ...baseFontSize(isPortrait, text1Glyph)};
+      // Apply vertical text styles using the provided glyphType
+      const text0Style = {...verticalTextStyle(currentText.glyphType), ...baseFontSize(isPortrait, currentText.glyphType)};
+      const text1Style = {...verticalTextStyle(nextText.glyphType), ...baseFontSize(isPortrait, nextText.glyphType)};
 
       if (text0Style) {
         Object.assign(text0Ref.current.style, text0Style);
@@ -94,25 +99,16 @@ export default function TextMorphEffect({
       }
     }
 
-    // Set initial text content
-    if (text0Ref.current && text1Ref.current) {
-      const currentText = normalizedTexts[textIndex % normalizedTexts.length];
-      const nextText = normalizedTexts[(textIndex + 1) % normalizedTexts.length];
-      applyTextStyles(currentText, nextText);
-    } 
-
     function doMorph() {
       if (!text0Ref.current || !text1Ref.current) return;
-      morph -= cooldown;
-      cooldown = 0;
-      let progress = morph / morphTime;
+      animationState.current.morph -= animationState.current.cooldown;
+      animationState.current.cooldown = 0;
+      let progress = animationState.current.morph / morphTime;
       
       if (progress > 1) {
-        // This marks the end of the morph
-        cooldown = cooldownTime;
+        animationState.current.cooldown = cooldownTime;
         progress = 1;
-        // Now update the text content
-        textIndex++;
+        animationState.current.textIndex++;
       }
       
       setMorph(progress);
@@ -121,7 +117,6 @@ export default function TextMorphEffect({
     function setMorph(progress: number) {
       if (!text0Ref.current || !text1Ref.current) return;
     
-      // Apply visual effects - using transform and opacity for better performance
       text1Ref.current.style.filter = `blur(${Math.min(8 / progress - 8, 100)}px)`;
       text1Ref.current.style.opacity = `${Math.pow(progress, 0.4) * 100}%`;
       
@@ -133,47 +128,48 @@ export default function TextMorphEffect({
     function doCooldown() {
       if (!text0Ref.current || !text1Ref.current) return;
       
-      morph = 0;
+      animationState.current.morph = 0;
 
-      // Apply styles
       text0Ref.current.style.filter = "";
       text0Ref.current.style.opacity = "100%";
       text1Ref.current.style.filter = "";
       text1Ref.current.style.opacity = "0%";
 
-      const currentText = normalizedTexts[textIndex % normalizedTexts.length];
-      const nextText = normalizedTexts[(textIndex + 1) % normalizedTexts.length];
+      const currentText = normalizedTexts[animationState.current.textIndex % normalizedTexts.length];
+      const nextText = normalizedTexts[(animationState.current.textIndex + 1) % normalizedTexts.length];
       applyTextStyles(currentText, nextText);
     }
 
     function animate() {
       if (!document.body.contains(text0Ref.current)) {
-        // Component has been unmounted or removed from DOM
         if (animationId) cancelAnimationFrame(animationId);
         return;
       }
       
       let newTime = new Date();
-      let dt = (newTime.getTime() - time.getTime()) / 1000;
-      time = newTime;
+      let dt = (newTime.getTime() - animationState.current.time.getTime()) / 1000;
+      animationState.current.time = newTime;
       
-      cooldown -= dt;
+      animationState.current.cooldown -= dt;
       
-      if (cooldown <= 0) {
+      if (animationState.current.cooldown <= 0) {
         doMorph();
       } else {
         doCooldown();
       }
       
-      // Request the next frame at the end of the function
       animationId = requestAnimationFrame(animate);
     }
 
-    // Main body.
-    // Start animation - only call requestAnimationFrame once to start the loop
+    // Set initial text content
+    const currentText = normalizedTexts[animationState.current.textIndex % normalizedTexts.length];
+    const nextText = normalizedTexts[(animationState.current.textIndex + 1) % normalizedTexts.length];
+    if (text0Ref.current && text1Ref.current) {
+      applyTextStyles(currentText, nextText);
+    }
+
     animationId = requestAnimationFrame(animate);
     
-    // Cleanup on unmount
     return () => {
       if (animationId) cancelAnimationFrame(animationId);
     };
@@ -185,13 +181,30 @@ export default function TextMorphEffect({
     : { fontSize: `${width / 2}vw` };  // In landscape, use width percentage
     
   return (
-    <div 
-      ref={containerRef}
-      className={`${styles.container} ${className}`} 
-      style={containerStyle}
-    >
-      <span ref={text0Ref} className={styles.text}></span>
-      <span ref={text1Ref} className={styles.text}></span>
-    </div>
+    <>
+      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+        <defs>
+          <filter id="threshold">
+            <feColorMatrix
+              in="SourceGraphic"
+              type="matrix"
+              values={`1 0 0 0 0
+                     0 1 0 0 0
+                     0 0 1 0 0
+                     0 0 0 255 ${threshold}`}
+            />
+          </filter>
+        </defs>
+      </svg>
+      
+      <div 
+        ref={containerRef}
+        className={`${styles.container} ${className}`} 
+        style={containerStyle}
+      >
+        <span ref={text0Ref} className={styles.text}></span>
+        <span ref={text1Ref} className={styles.text}></span>
+      </div>
+    </>
   );
 }

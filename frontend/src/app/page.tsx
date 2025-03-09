@@ -8,12 +8,29 @@ import { getAbout } from '@/lib/strapi'
 import TextMorphEffect from './components/TextMorphEffect'
 import './page.css'
 import './fonts.css'
+import { GlyphType } from './utils/textUtils'
 
 export default function Home() {
   const aboutRef = useRef<HTMLDivElement>(null)
   const projectsRef = useRef<HTMLDivElement>(null)
+  const navbarRef = useRef<HTMLDivElement>(null)
   const [aboutData, setAboutData] = useState<AboutData | null>(null)
   const [isPortrait, setIsPortrait] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Calculate how far we've scrolled as a percentage
+      // We want the effect to complete by the time we reach the about section
+      const aboutSection = window.innerHeight
+      const scrollPosition = window.scrollY
+      const progress = Math.min(scrollPosition / aboutSection, 1)
+      setScrollProgress(progress)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     const loadAboutData = async () => {
@@ -45,7 +62,13 @@ export default function Home() {
     return () => window.removeEventListener('resize', checkOrientation);
   }, []);
   const scrollToSection = (ref: React.RefObject<HTMLDivElement | null>) => {
-    ref.current?.scrollIntoView({ behavior: 'smooth' })
+    if (!ref.current || !navbarRef.current) return;
+    const navbarHeight = navbarRef.current.offsetHeight;
+    const targetPosition = window.scrollY + ref.current.getBoundingClientRect().top;
+    window.scrollTo({
+      top: targetPosition - navbarHeight,
+      behavior: 'smooth'
+    });
   }
 
   return (
@@ -53,20 +76,27 @@ export default function Home() {
       {/* Fixed cube section */}
 
       {/* Hero section with morphing text */}
-      <div className="fixed top-1/2 left-0 w-full">
+      <div 
+        className="fixed top-1/2 left-0 w-full"
+        style={{
+          transform: `translateY(${Math.pow(scrollProgress / 0.8, 2.0) * -10}vh)`,
+          opacity: 1 - Math.pow(scrollProgress * 1.2, 1.0),
+        }}
+      >
         <TextMorphEffect 
-          texts={[{ text: 'JIHEE', font: 'BagelFatOne, serif' },
-            { text: '지희', font: 'BagelFatOne, serif' },
-            { text: 'ジヒ', font: 'PottaOne, serif' },
-            { text: '智熙', font: 'PottaOne, serif' }]} 
+          texts={[{ text: 'JIHEE', font: 'BagelFatOne, serif', glyphType: GlyphType.L },
+            { text: '지희', font: 'BagelFatOne, serif', glyphType: GlyphType.K },
+            { text: 'ジヒ', font: 'PottaOne, serif', glyphType: GlyphType.J },
+            { text: '智熙', font: 'PottaOne, serif', glyphType: GlyphType.C }]} 
           width={80}
           defaultFont='NotoSerifCJK, serif'
           isPortrait={isPortrait}
+          threshold={-140}
         />
       </div>
 
       {/* Navbar */}
-      <div className="fixed top-0 w-full z-30 ">
+      <div ref={navbarRef} className="fixed top-0 w-full z-30">
           <nav className="flex justify-between px-8 py-4 latin-font navbar-text">
             <button 
               onClick={() => scrollToSection(aboutRef)}
@@ -105,12 +135,12 @@ export default function Home() {
           </div>
         </section>
 
-        <section ref={projectsRef} className="min-h-screen">
-          <div className="max-w-4xl mx-auto pt-20">
-            <h2 className="text-4xl mb-8">Projects</h2>
-            {/* Projects content will be implemented next */}
-          </div>
-        </section>
+          <section ref={projectsRef} className="min-h-screen">
+            <div className="max-w-4xl mx-auto pt-20">
+              <h2 className="text-4xl mb-8">Projects</h2>
+              {/* Projects content will be implemented next */}
+            </div>
+          </section>
         </div>
       </div>
     </div>
