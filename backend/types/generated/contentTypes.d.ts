@@ -398,6 +398,7 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
 export interface ApiProjectProject extends Struct.CollectionTypeSchema {
   collectionName: 'projects';
   info: {
+    description: '';
     displayName: 'Projects';
     pluralName: 'projects';
     singularName: 'project';
@@ -423,6 +424,9 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     Thumbnail: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     Title: Schema.Attribute.String;
+    Type: Schema.Attribute.Enumeration<
+      ['Interactive', 'Static', 'Fashion', 'Engineering', 'Computer Music']
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
