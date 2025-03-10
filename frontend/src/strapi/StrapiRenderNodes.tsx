@@ -1,14 +1,8 @@
 'use client'
 
 import { ReactNode, createElement } from 'react';
-import { TextNode, LinkNode, ParagraphNode } from '@/lib/types/ParagraphNode';
-import { getTextGlyphClass   } from '@/app/utils/textUtils';
-
-interface HeadingNode {
-  type: 'heading';
-  children: TextNode[];
-  level: number;
-}
+import { getTextGlyphClass } from '@/app/utils/textUtils';
+import { TextNode, LinkNode, ParagraphNode, HeadingNode } from './StrapiData';
 
 export const renderTextNode = (node: TextNode): string => {
   return node.text;

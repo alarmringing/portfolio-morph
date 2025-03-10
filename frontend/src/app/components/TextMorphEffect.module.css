@@ -13,8 +13,8 @@
 .text {
   position: absolute;
   font-weight: 1000;
-  color: rgb(0, 255, 13);
   width: 100%;
+  mix-blend-mode: overlay;
   height: 100%;
   display: flex;
   justify-content: center;

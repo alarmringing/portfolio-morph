@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:1337/api';
+export const API_URL = 'http://localhost:1337/api';
+export const STRAPI_URL = 'http://localhost:1337';
 
 export const getAbout = async () => {
   const response = await axios.get(`${API_URL}/about`);
@@ -10,13 +11,17 @@ export const getAbout = async () => {
 export const getProjects = async () => {
   const response = await axios.get(`${API_URL}/projects`, {
     params: {
-      sort: 'title',
+      sort: ['Title:asc'],
+      populate: ['Thumbnail']
     }
   });
+  console.log('Strapi response:', response.data);
   return response.data;
 };
 
 export default {
   getAbout,
-  getProjects
+  getProjects,
+  API_URL,
+  STRAPI_URL
 };
