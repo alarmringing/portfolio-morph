@@ -2,13 +2,17 @@
 
 import SceneWrapper from './canvas/SceneWrapper'
 import { useRef, useEffect, useState } from 'react'
-import { AboutData } from '@/lib/about'
-import { renderNode } from '@/components/RichText'
-import { getAbout } from '@/lib/strapi'
+import { AboutData } from '@/strapi/StrapiData'
+import { renderNode } from '@/strapi/StrapiRenderNodes'
+import { FilterType } from './components/ProjectGrid'
+import ProjectGrid from './components/ProjectGrid'
+import { getAbout } from '@/strapi/strapi'
 import TextMorphEffect from './components/TextMorphEffect'
 import './page.css'
 import './fonts.css'
 import { GlyphType } from './utils/textUtils'
+import { clamp } from 'three/src/math/MathUtils.js'
+import ProjectFilterButton from './components/ProjectButtonFilter'
 
 export default function Home() {
   const aboutRef = useRef<HTMLDivElement>(null)
@@ -17,6 +21,8 @@ export default function Home() {
   const [aboutData, setAboutData] = useState<AboutData | null>(null)
   const [isPortrait, setIsPortrait] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [activeFilter, setActiveFilter] = useState<FilterType>(FilterType.All)
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,7 +30,8 @@ export default function Home() {
       // We want the effect to complete by the time we reach the about section
       const aboutSection = window.innerHeight
       const scrollPosition = window.scrollY
-      const progress = Math.min(scrollPosition / aboutSection, 1)
+      var progress = Math.min(scrollPosition / aboutSection, 1)
+      progress = clamp(progress, 0, 1.0);
       setScrollProgress(progress)
     }
 
@@ -71,6 +78,8 @@ export default function Home() {
     });
   }
 
+  const morphingTextColor = `color-mix(in srgb, var(--accent-color) ${100 - (scrollProgress * 100)}%, var(--letter-muted-color) ${scrollProgress * 100}%)`;
+
   return (
     <div className="gradient-background">
       {/* Fixed cube section */}
@@ -79,8 +88,9 @@ export default function Home() {
       <div 
         className="fixed top-1/2 left-0 w-full"
         style={{
-          transform: `translateY(${Math.pow(scrollProgress / 0.8, 2.0) * -10}vh)`,
-          opacity: 1 - Math.pow(scrollProgress * 1.2, 1.0),
+          //transform: `translateY(${Math.pow(scrollProgress / 0.8, 2.0) * -10}vh)`,
+          //opacity: 1 - Math.pow(scrollProgress * 1.2, 1.0),
+          filter: `blur(${scrollProgress * 15}px)`,
         }}
       >
         <TextMorphEffect 
@@ -88,7 +98,8 @@ export default function Home() {
             { text: '지희', font: 'BagelFatOne, serif', glyphType: GlyphType.K },
             { text: 'ジヒ', font: 'PottaOne, serif', glyphType: GlyphType.J },
             { text: '智熙', font: 'PottaOne, serif', glyphType: GlyphType.C }]} 
-          width={80}
+          width={70}
+          color={morphingTextColor}
           defaultFont='NotoSerifCJK, serif'
           isPortrait={isPortrait}
           threshold={-140}
@@ -97,16 +108,16 @@ export default function Home() {
 
       {/* Navbar */}
       <div ref={navbarRef} className="fixed top-0 w-full z-30">
-          <nav className="flex justify-between px-8 py-4 latin-font navbar-text">
+          <nav className="flex justify-between px-8 py-4 latin-font ">
             <button 
               onClick={() => scrollToSection(aboutRef)}
-              className="hover:text-gray-300 transition-colors"
+              className="htransition-colors navbar-text"
             >
               About
             </button>
             <button 
               onClick={() => scrollToSection(projectsRef)}
-              className="hover:text-gray-300 transition-colors"
+              className="transition-colors navbar-text"
             >
               Projects
             </button>
@@ -114,7 +125,7 @@ export default function Home() {
         </div>
 
       {/* Scrollable content */}
-      <div className="relative content-text">
+      <div className="relative content-text latin-font">
       
         {/* Spacer to push content below viewport */}
         <div className="h-screen" />
@@ -122,9 +133,9 @@ export default function Home() {
         {/* content */}
         <div className="relative z-10 bg-transparent p-8"> 
         <section ref={aboutRef} className="min-h-screen ">
-          <div className="max-w-4xl mx-auto pt-20">
+          <div className="max-w-4xl mx-auto ">
             {aboutData ? (
-              <div className="text-lg">
+              <div >
                 {aboutData.data.description.map((block, index) => (
                   <div key={index}>{renderNode(block)}</div>
                 ))}
@@ -135,12 +146,33 @@ export default function Home() {
           </div>
         </section>
 
-          <section ref={projectsRef} className="min-h-screen">
-            <div className="max-w-4xl mx-auto pt-20">
-              <h2 className="text-4xl mb-8">Projects</h2>
-              {/* Projects content will be implemented next */}
+          <section ref={projectsRef} className="max-h-screen">
+            <div className="max-w-6xl ml-auto mr-8 min-h-[500px]">
+                <ProjectGrid activeFilter={activeFilter} />
             </div>
-          </section>
+            <div className="bottom-8 left-8 flex flex-col z-30" style={{position: 'sticky'}}>
+              <ProjectFilterButton 
+                filter={FilterType.All}
+                activeFilter={activeFilter}
+                onClick={setActiveFilter}
+              />
+              <ProjectFilterButton 
+                filter={FilterType.Interactive}
+                activeFilter={activeFilter}
+                onClick={setActiveFilter}
+              />
+              <ProjectFilterButton 
+                filter={FilterType.Static}
+                activeFilter={activeFilter}
+                onClick={setActiveFilter}
+              />
+              <ProjectFilterButton 
+                filter={FilterType.Engineering}
+                activeFilter={activeFilter}
+                onClick={setActiveFilter}
+              />
+            </div>
+           </section>
         </div>
       </div>
     </div>
