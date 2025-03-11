@@ -5,6 +5,10 @@
   --accent-color: #eaffa3;
   --letter-muted-color: #2d3834;
   --primary-color: #e5bdff;
+
+  --gradient-begin-color: rgba(255, 255, 255, 0.733);
+  --gradient-middle-color: #628988ff;
+  --gradient-end-color: #09302aff;
 }
 
 
@@ -17,26 +21,21 @@ html, body {
 
 /* Container for the full gradient background */
 .gradient-background {
-  /* Create a linear gradient from light to dark gray that spans the entire height */
-  background: linear-gradient(to bottom, 
-  rgba(252, 255, 225, 0.726) 0%,      /* Start fully transparent light gray */
-  #628988ff 20%,     /* Become black at middle */
-  #254945ff 50%,     /* Become black at middle */
-  #09302aff 100% , 
-  #09302aff 100%      /* Stay black till end */
-), url(https://grainy-gradients.vercel.app/noise.svg);
+  /* Create a linear gradient that completes within 100vh */
+  background: 
+    linear-gradient(to bottom,  
+      var(--gradient-begin-color) 0vh,      /* Start color at top */
+      var(--gradient-middle-color) 50vh,     /* Middle color at half viewport */
+      var(--gradient-end-color) 100vh,       /* End color at full viewport */
+      var(--gradient-end-color) 100%         /* Maintain end color for rest of content */
+    ),
+    url(https://grainy-gradients.vercel.app/noise.svg);
+  background-attachment: local;  /* Makes gradient scroll with content */
+  background-repeat: no-repeat;  /* Prevents gradient from repeating */
 }
 
-.gradient-background2 {
-  /* Create a linear gradient from light to dark gray that spans the entire height */
-  background: linear-gradient(to bottom, 
-  #b9a9b3ff 0%,      /* Start fully transparent light gray */
-  #9d8693ff 20%,     /* Become black at middle */
-  #67475bff 50%,     /* Become black at middle */
-  #300924ff 100% , 
-  #300924ff 100%      /* Stay black till end */
-), url(https://grainy-gradients.vercel.app/noise.svg);
-  
+.fixed-background {
+  background: var(--gradient-end-color);
 } 
 
 a {
@@ -55,14 +54,7 @@ a:hover {
 }
 
 .navbar-text {
-  font-weight: 1000;
   font-size: 1.5rem;
-  color: var(--primary-color); 
-}
-
-.navbar-text:hover {
-  font-weight: 1000;
-  color: var(--accent-color);
 }
 
 .content-text {
@@ -77,4 +69,17 @@ a:hover {
 
 .latin-font {
   font-family: 'Syne', sans-serif;
+}
+
+button {
+  color: var(--primary-color);
+  transition: color 0.3s ease;
+}
+
+button:hover {
+  color: var(--accent-color);
+}
+
+.button-selected {
+  color: var(--accent-color);
 }

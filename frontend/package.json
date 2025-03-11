@@ -15,6 +15,7 @@
     "@strapi/sdk-js": "^1.0.0",
     "@types/three": "^0.174.0",
     "axios": "^1.8.2",
+    "framer-motion": "^12.4.11",
     "isotope": "^1.0.0-alpha.3",
     "isotope-layout": "^3.0.6",
     "next": "15.2.1",

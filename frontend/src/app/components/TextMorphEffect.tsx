@@ -18,6 +18,7 @@ interface TextMorphEffectProps {
   defaultFont?: string;
   isPortrait?: boolean;
   threshold?: number;
+  textColor?: string;
 }
 
 export default function TextMorphEffect({ 
@@ -26,7 +27,7 @@ export default function TextMorphEffect({
   morphTime = 2,
   cooldownTime = 0.1,
   width = 80,
-  color = 'var(--accent-color)',
+  textColor = 'var(--accent-color)',
   defaultFont = 'NotoSerifCJK, serif',
   isPortrait = false,
   threshold = -140,
@@ -203,8 +204,8 @@ export default function TextMorphEffect({
         className={`${styles.container} ${className}`} 
         style={containerStyle}
       >
-        <span ref={text0Ref} className={styles.text} style={{ color: color }}></span>
-        <span ref={text1Ref} className={styles.text} style={{ color: color }}></span>
+        <span ref={text0Ref} className={styles.text} style={{ color: textColor }}></span>
+        <span ref={text1Ref} className={styles.text} style={{ color: textColor }}></span>
       </div>
     </>
   );

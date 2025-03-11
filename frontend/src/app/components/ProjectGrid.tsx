@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getProjects, STRAPI_URL } from '@/strapi/strapi';
 import { ProjectData, ProjectResponse } from '@/strapi/StrapiData';
 import styles from './ProjectGrid.module.css';
+import Link from 'next/link';
 
 export enum FilterType {
     All = 'all',
@@ -14,9 +15,10 @@ export enum FilterType {
 
 interface ProjectGridProps {
     activeFilter: FilterType;
+    onGridClick: (id: number) => void;
 }
 
-export default function ProjectGrid({ activeFilter }: ProjectGridProps) {
+export default function ProjectGrid({ activeFilter, onGridClick }: ProjectGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [isotopeInstance, setIsotopeInstance] = useState<any>(null);
@@ -83,11 +85,11 @@ export default function ProjectGrid({ activeFilter }: ProjectGridProps) {
         {projects.map((project) => {
           const imageUrl = project.Thumbnail ? 
             `${STRAPI_URL}${project.Thumbnail.url}` : null;
-
           return (
-            <div 
+            <button 
               key={project.id} 
               className={`${styles.gridItem} ${project.Type?.toLowerCase()}`}
+              onClick={() => onGridClick(project.id)}
             >
               <div className={styles.imageContainer}>
                 {project.Thumbnail ? (
@@ -107,7 +109,7 @@ export default function ProjectGrid({ activeFilter }: ProjectGridProps) {
                   <p>{project.Type}</p>
                 )}
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
