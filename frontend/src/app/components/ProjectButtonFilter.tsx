@@ -10,7 +10,7 @@ export default function ProjectFilterButton({ filter, activeFilter, onClick }: P
   return (
     <button 
       onClick={() => onClick(filter)}
-      className={`text-left transition-colors w-fit ${
+      className={`text-left w-fit ${
         activeFilter === filter ? 'button-selected' : ''
       }`}
     >

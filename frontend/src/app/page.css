@@ -7,8 +7,10 @@
   --primary-color: #e5bdff;
 
   --gradient-begin-color: rgba(255, 255, 255, 0.733);
-  --gradient-middle-color: #628988ff;
-  --gradient-end-color: #09302aff;
+  --gradient-middle-color: rgb(68, 81, 97);
+  --gradient-end-color: rgb(0, 44, 37);
+
+  --noise-opacity: 0.3;
 }
 
 
@@ -25,18 +27,34 @@ html, body {
   background: 
     linear-gradient(to bottom,  
       var(--gradient-begin-color) 0vh,      /* Start color at top */
-      var(--gradient-middle-color) 50vh,     /* Middle color at half viewport */
+      var(--gradient-middle-color) 60vh,     /* Middle color at half viewport */
       var(--gradient-end-color) 100vh,       /* End color at full viewport */
       var(--gradient-end-color) 100%         /* Maintain end color for rest of content */
-    ),
-    url(https://grainy-gradients.vercel.app/noise.svg);
-  background-attachment: local;  /* Makes gradient scroll with content */
-  background-repeat: no-repeat;  /* Prevents gradient from repeating */
+    );
+  position: relative;
+}
+
+.gradient-background::before,
+.fixed-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: hard-light;
+  background-image: url('/noise.svg');
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: var(--noise-opacity);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .fixed-background {
   background: var(--gradient-end-color);
-} 
+  position: relative;
+}
 
 a {
   color: var(--accent-color);
@@ -73,11 +91,13 @@ a:hover {
 
 button {
   color: var(--primary-color);
-  transition: color 0.3s ease;
+  cursor: pointer;
 }
 
 button:hover {
   color: var(--accent-color);
+  font-weight: 1000;
+  text-decoration: underline;
 }
 
 .button-selected {

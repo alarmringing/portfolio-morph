@@ -18,7 +18,6 @@ export const handlePageExitTransition = (
 export const  handlePageEnterTransition = (
     setIsEntering: (value: boolean) => void,
   ) => {
-  
     // Handle navigation transition (fade out then callback)
     setIsEntering(true);
   }; 
