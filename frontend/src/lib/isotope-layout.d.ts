@@ -6,7 +6,14 @@ declare module 'isotope-layout' {
       columnWidth: string;
       gutter?: number;
     };
-    // Add other options as needed
+    transitionDuration?: string;
+    stagger?: number;
+    hiddenStyle?: {
+      opacity: number;
+    };
+    visibleStyle?: {
+      opacity: number;
+    };
   }
 
   class Isotope {

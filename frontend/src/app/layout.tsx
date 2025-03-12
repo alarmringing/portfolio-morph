@@ -1,5 +1,6 @@
 'use client'
 
+import { ProjectsProvider } from './context/ProjectsContext'
 import SharedLayout from './components/SharedLayout'
 
 export default function RootLayout({
@@ -10,7 +11,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SharedLayout>{children}</SharedLayout>
+        <ProjectsProvider>
+          <SharedLayout>
+            {children}
+          </SharedLayout>
+        </ProjectsProvider>
       </body>
     </html>
   )

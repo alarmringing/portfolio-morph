@@ -58,7 +58,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     });
   };
 
-  const morphingTextColor = `color-mix(in srgb, var(--accent-color) ${100 - (scrollProgress * 100)}%, var(--letter-muted-color) ${scrollProgress * 100}%)`;
+  const morphingTextColor = `color-mix(in srgb, var(--morphing-text-color) ${100 - (scrollProgress * 100)}%, var(--letter-muted-color) ${scrollProgress * 100}%)`;
 
   // Determine background class based on the current route
   const backgroundClass = pathname === '/' ? 'gradient-background' : 'fixed-background';
@@ -74,7 +74,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
       >
         <TextMorphEffect 
           texts={[
-            { text: 'JIHEE', font: 'BagelFatOne, serif', glyphType: GlyphType.L },
+            { text: 'Jihee', font: 'BagelFatOne, monospace', glyphType: GlyphType.L },
             { text: '지희', font: 'BagelFatOne, serif', glyphType: GlyphType.K },
             { text: 'ジヒ', font: 'PottaOne, serif', glyphType: GlyphType.J },
             { text: '智熙', font: 'PottaOne, serif', glyphType: GlyphType.C }

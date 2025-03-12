@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react';
-import { getProjects, STRAPI_URL } from '@/strapi/strapi';
-import { ProjectData, ProjectResponse } from '@/strapi/StrapiData';
+import { useEffect, useRef } from 'react';
+import { STRAPI_URL } from '@/strapi/strapi';
 import styles from './ProjectGrid.module.css';
-import Link from 'next/link';
+import { useProjects } from '../context/ProjectsContext';
 
 export enum FilterType {
     All = 'all',
@@ -14,68 +13,87 @@ export enum FilterType {
 }
 
 interface ProjectGridProps {
-    activeFilter: FilterType;
     onGridClick: (id: number) => void;
 }
 
-export default function ProjectGrid({ activeFilter, onGridClick }: ProjectGridProps) {
+export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
+  const isotope = useRef<any>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const [projects, setProjects] = useState<ProjectData[]>([]);
-  const [isotopeInstance, setIsotopeInstance] = useState<any>(null);
+  const { projects, isLoading, activeFilter } = useProjects();
 
-  // Watch for filter changes and apply them to isotope
+  // Initialize Isotope after component mounts and projects are loaded
   useEffect(() => {
-    if (isotopeInstance) {
-      const filterValue = activeFilter === FilterType.All ? '*' : `.${activeFilter}`;
-      isotopeInstance.arrange({ filter: filterValue });
-    }
-  }, [activeFilter, isotopeInstance]);
+    const grid = gridRef.current;
+    if (!grid || !projects.length) return;
 
-  // Load projects from Strapi
-  useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const response: ProjectResponse = await getProjects();
-        console.log('Projects response:', response);
-        setProjects(response.data);
-      } catch (error) {
-        console.error('Error loading projects:', error);
-      }
-    };
-
-    loadProjects();
-  }, []);
-
-  // Initialize Isotope after projects are loaded
-  useEffect(() => {
-    let iso: any = null;
+    let isotopeInstance: any = null;
 
     const initIsotope = async () => {
-      if (gridRef.current && projects.length > 0) {
-        const Isotope = (await import('isotope-layout')).default;
-        iso = new Isotope(gridRef.current, {
+      if (typeof window !== 'undefined') {
+        const [Isotope, imagesLoaded] = await Promise.all([
+          import('isotope-layout'),
+          import('imagesloaded')
+        ]);
+
+        isotopeInstance = new Isotope.default(grid, {
           itemSelector: `.${styles.gridItem}`,
+          layoutMode: 'masonry',
           masonry: {
             columnWidth: `.${styles.gridSizer}`,
             gutter: 20
           },
-          layoutMode: 'masonry'
+          stagger: 50,
+          transitionDuration: '0.8s',
+          hiddenStyle: {
+            opacity: 0
+          },
+          visibleStyle: {
+            opacity: 1
+          }
+        });
+
+        // Now TypeScript understands the imagesLoaded API
+        imagesLoaded.default(grid).on('progress', () => {
+          if (isotopeInstance) {
+            isotopeInstance.layout();
+          }
         });
         
-        setIsotopeInstance(iso);
+        isotope.current = isotopeInstance;
+
+        // Apply initial filter if needed
+      if (activeFilter !== FilterType.All) {
+        isotopeInstance.arrange({
+          filter: `.${activeFilter.toLowerCase()}`,
+          transitionDuration: 0
+        });
+      }
       }
     };
 
-    if (typeof window !== 'undefined') {
-      initIsotope();
-    }
+    // Initialize Isotope
+    initIsotope();
 
+    // Cleanup
     return () => {
-      if (iso) {
-        iso.destroy();
+      if (isotopeInstance) {
+        isotopeInstance.destroy();
       }
     };
   }, [projects]);
+
+  // Handle filter changes
+  useEffect(() => {
+    if (!isotope.current) return;
+    
+    const filterValue = activeFilter === FilterType.All ? '*' : `.${activeFilter.toLowerCase()}`;
+    console.log(filterValue);
+    isotope.current.arrange({ filter: filterValue });
+  }, [activeFilter]);
+
+  if (isLoading) {
+    return <div>Loading projects...</div>;
+  }
 
   return (
     <div>
@@ -97,7 +115,6 @@ export default function ProjectGrid({ activeFilter, onGridClick }: ProjectGridPr
                     src={imageUrl!}
                     alt={project.Title}
                     loading="lazy"
-                    onLoad={() => isotopeInstance?.layout()}
                   />
                 ) : (
                   <div>No Image</div>

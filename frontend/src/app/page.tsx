@@ -13,17 +13,14 @@ import { fadeTransitionStyle, handlePageExitTransition, handlePageEnterTransitio
 export default function Home() {
   const router = useRouter();
   const [aboutData, setAboutData] = useState<AboutData | null>(null)
-  const [activeFilter, setActiveFilter] = useState<FilterType>(FilterType.All)
   const [isEntering, setIsEntering] = useState(false);
   const isFirstLoad = useRef(true);
 
   useEffect(() => {
     if (isFirstLoad.current) {
-      // On first load, immediately show content
       setIsEntering(true);
       isFirstLoad.current = false;
     } else {
-      // Coming from another page, trigger fade in
       handlePageEnterTransition(setIsEntering);
     }
   }, []);
@@ -42,7 +39,7 @@ export default function Home() {
   }, []);
 
   const handleGridClick = (id: number) => {
-      handlePageExitTransition(setIsEntering, () => {
+    handlePageExitTransition(setIsEntering, () => {
       router.push(`/project/${id}`);
     });
   };
@@ -72,28 +69,22 @@ export default function Home() {
         {/* Projects section */}
         <section id="projects">
           <div className="max-w-6xl ml-auto mr-8 min-h-[500px]">
-            <ProjectGrid activeFilter={activeFilter} onGridClick={handleGridClick} />
+            <ProjectGrid 
+              onGridClick={handleGridClick}
+            />
           </div>
           <div className="bottom-8 left-8 flex flex-col z-30" style={{position: 'sticky'}}>
             <ProjectFilterButton 
               filter={FilterType.All}
-              activeFilter={activeFilter}
-              onClick={setActiveFilter}
             />
             <ProjectFilterButton 
               filter={FilterType.Interactive}
-              activeFilter={activeFilter}
-              onClick={setActiveFilter}
             />
             <ProjectFilterButton 
               filter={FilterType.Static}
-              activeFilter={activeFilter}
-              onClick={setActiveFilter}
             />
             <ProjectFilterButton 
               filter={FilterType.Engineering}
-              activeFilter={activeFilter}
-              onClick={setActiveFilter}
             />
           </div>
         </section>

@@ -1,15 +1,16 @@
+import { useProjects } from '../context/ProjectsContext';
 import { FilterType } from './ProjectGrid';
 
 interface ProjectFilterButtonProps {
   filter: FilterType;
-  activeFilter: string;
-  onClick: (filter: FilterType) => void;
 }
 
-export default function ProjectFilterButton({ filter, activeFilter, onClick }: ProjectFilterButtonProps) {
+export default function ProjectFilterButton({ filter }: ProjectFilterButtonProps) {
+  const { activeFilter, setActiveFilter } = useProjects();
+  
   return (
     <button 
-      onClick={() => onClick(filter)}
+      onClick={() => setActiveFilter(filter)}
       className={`text-left w-fit ${
         activeFilter === filter ? 'button-selected' : ''
       }`}

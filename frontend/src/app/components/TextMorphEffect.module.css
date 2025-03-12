@@ -1,3 +1,11 @@
+:root {
+  --mono: "MONO" 0.34;
+  --casl: "CASL" 0.88;
+  --wght: "wght" 1000;
+  --slnt: "slnt" 0;
+  --CRSV: "CRSV" 0.5;
+  }
+
 .container {
   filter: url(#threshold) blur(0.6px);
   position: relative;
@@ -10,6 +18,7 @@
   height: auto;
 }
 
+
 .text {
   position: absolute;
   font-weight: 1000;
@@ -19,4 +28,6 @@
   justify-content: center;
   align-items: center;
   white-space: nowrap;
+
+  font-variation-settings: var(--mono), var(--casl), var(--wght), var(--slnt), var(--CRSV);
 }

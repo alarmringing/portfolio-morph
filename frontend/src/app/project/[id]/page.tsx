@@ -14,7 +14,8 @@ export async function generateStaticParams() {
 // Server component that fetches data
 export default async function ProjectPage({ params }: { params: { id: string } }) {
   const projects = await getProjects();
-  const project = projects.data.find((p: ProjectData) => p.id.toString() === params.id);
+  const { id } = await params;
+  const project = projects.data.find((p: ProjectData) => p.id.toString() === id);
 
   if (!project) {
     return <div>Project not found</div>;

@@ -73,8 +73,8 @@ export default function TextMorphEffect({
     const baseFontSize = (isPortrait: boolean, glyphType: GlyphType) => {
       return {
         fontSize: isPortrait
-          ? `${width / 3 * (isCJKGlyph(glyphType) ? 1.3 : 1)}vh` // In portrait, use height percentage
-          : `${width / 2.6 * (isCJKGlyph(glyphType) ? 1.3 : 1)}vw`  // In landscape, use width percentage
+          ? `${width / 3 * (isCJKGlyph(glyphType) ? 1.3 : 1.1)}vh` // In portrait, use height percentage
+          : `${width / 2.6 * (isCJKGlyph(glyphType) ? 1.3 : 1.1)}vw`  // In landscape, use width percentage
       };
     };
 
