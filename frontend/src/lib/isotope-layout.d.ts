@@ -5,6 +5,8 @@ declare module 'isotope-layout' {
     masonry?: {
       columnWidth: string;
       gutter?: number;
+      originLeft?: boolean;
+      horizontalOrder?: boolean;
     };
     transitionDuration?: string;
     stagger?: number;

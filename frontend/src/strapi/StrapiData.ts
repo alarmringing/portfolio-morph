@@ -35,7 +35,7 @@ export interface ImageFormat {
   url: string;
 }
 
-export interface ThumbnailData {
+export interface MediaData {
   id: number;
   documentId: string;
   name: string;
@@ -73,20 +73,32 @@ export interface AboutData {
   };
 }
 
+
 // Project Types
 export interface ProjectData {
   id: number;
   documentId: string;
   Title: string;
+  Show: boolean;
   Description: ParagraphNode[] | null;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
   Type: string | null;
-  Thumbnail: ThumbnailData;
+  Thumbnail: MediaData;
+  Media: MediaData[] | null;
+  Stack: string | null;
+  Year: string | null;
+  HeroType: string | null;
+  Collaborators: string | null;
+  HeroMedia: MediaData | null;
+  Iframe: string | null;
+  Youtube: string | null;
+  Github: string | null;
+  Vimeo: string | null;
 }
 
-export interface ProjectResponse {
+export interface ProjectsResponse {
   data: ProjectData[];
   meta: {
     pagination: {
@@ -96,4 +108,9 @@ export interface ProjectResponse {
       total: number;
     };
   };
+} 
+
+export interface ProjectResponse {
+  data: ProjectData;
+  meta: {};
 } 

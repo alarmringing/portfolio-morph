@@ -38,9 +38,9 @@ export default function Home() {
     loadAboutData();
   }, []);
 
-  const handleGridClick = (id: number) => {
+  const handleGridClick = (documentId: string) => {
     handlePageExitTransition(setIsEntering, () => {
-      router.push(`/project/${id}`);
+      router.push(`/project/${documentId}`);
     });
   };
 
@@ -68,7 +68,7 @@ export default function Home() {
 
         {/* Projects section */}
         <section id="projects">
-          <div className="max-w-6xl ml-auto mr-8 min-h-[500px]">
+          <div>
             <ProjectGrid 
               onGridClick={handleGridClick}
             />
@@ -84,7 +84,10 @@ export default function Home() {
               filter={FilterType.Static}
             />
             <ProjectFilterButton 
-              filter={FilterType.Engineering}
+              filter={FilterType.Rnd}
+            />
+            <ProjectFilterButton 
+              filter={FilterType.Music}
             />
           </div>
         </section>

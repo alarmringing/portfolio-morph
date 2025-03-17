@@ -44,10 +44,56 @@
       "enum": [
         "Interactive",
         "Static",
-        "Fashion",
-        "Engineering",
-        "Computer Music"
+        "Rnd",
+        "Music"
       ]
+    },
+    "Show": {
+      "type": "boolean",
+      "default": true
+    },
+    "Year": {
+      "type": "string"
+    },
+    "Vimeo": {
+      "type": "string"
+    },
+    "Github": {
+      "type": "string"
+    },
+    "Youtube": {
+      "type": "string"
+    },
+    "Stack": {
+      "type": "string"
+    },
+    "HeroType": {
+      "type": "enumeration",
+      "enum": [
+        "Thumbnail",
+        "Youtube",
+        "Vimeo",
+        "Audio",
+        "HeroMedia",
+        "None"
+      ]
+    },
+    "Collaborators": {
+      "type": "string"
+    },
+    "HeroMedia": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "Iframe": {
+      "type": "string"
     }
   }
 }

@@ -15,7 +15,7 @@ export default function ProjectFilterButton({ filter }: ProjectFilterButtonProps
         activeFilter === filter ? 'button-selected' : ''
       }`}
     >
-      {filter.charAt(0).toUpperCase() + filter.slice(1)}
+      {filter.charAt(0).toUpperCase() + filter.slice(1).replace('nd', ' & D')}
     </button>
   );
 }

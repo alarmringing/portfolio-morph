@@ -5,7 +5,7 @@ import { STRAPI_URL } from '@/strapi/strapi';
 import { renderNode } from '@/strapi/StrapiRenderNodes';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { fadeTransitionStyle, handlePageEnterTransition, handlePageExitTransition } from '../utils/transitions';
+import { fadeTransitionStyle, handlePageEnterTransition, handlePageExitTransition } from '../../utils/transitions';
 
 interface ProjectPageProps {
   project: ProjectData;

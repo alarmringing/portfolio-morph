@@ -1,13 +1,16 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { ProjectData, ProjectResponse } from '@/strapi/StrapiData';
-import { getProjects } from '@/strapi/strapi';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { ProjectData } from '@/strapi/StrapiData';
+import { getProjectsGrid } from '@/strapi/strapi';
 import { FilterType } from '../components/ProjectGrid';
 
 interface ProjectsContextType {
   projects: ProjectData[];
   isLoading: boolean;
+  hasMore: boolean;
+  loadMore: () => Promise<void>;
+  error: string | null;
   activeFilter: FilterType;
   setActiveFilter: (filter: FilterType) => void;
 }
@@ -15,34 +18,47 @@ interface ProjectsContextType {
 const ProjectsContext = createContext<ProjectsContextType>({
   projects: [],
   isLoading: true,
+  hasMore: true,
+  loadMore: async () => {},
+  error: null,
   activeFilter: FilterType.All,
   setActiveFilter: () => {}
 });
 
 export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<ProjectData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>(FilterType.All);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
 
+  const loadMore = useCallback(async () => {
+    if (isLoading || !hasMore) return;
+
+    try {
+      setIsLoading(true);
+      const { projects: newProjects, pagination } = await getProjectsGrid(page);
+
+      setProjects(prev => [...prev, ...newProjects]);
+      setHasMore(pagination.pageCount > page);
+      setPage(prev => prev + 1);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, isLoading, hasMore]);
+
+  // Load initial data
   useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        console.log('Loading projects...');
-        const response: ProjectResponse = await getProjects();
-        setProjects(response.data);
-      } catch (error) {
-        console.error('Error loading projects:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadProjects();
+    loadMore();
   }, []);
 
   return (
-    <ProjectsContext.Provider value={{ projects, isLoading, activeFilter, setActiveFilter }}>
+    <ProjectsContext.Provider value={{ projects, isLoading, hasMore, loadMore, error, activeFilter, setActiveFilter }}>
       {children}
     </ProjectsContext.Provider>
   );

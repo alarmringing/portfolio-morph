@@ -407,10 +407,17 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    Collaborators: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     Description: Schema.Attribute.Blocks;
+    Github: Schema.Attribute.String;
+    HeroMedia: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    HeroType: Schema.Attribute.Enumeration<
+      ['Thumbnail', 'Youtube', 'Vimeo', 'Audio', 'HeroMedia', 'None']
+    >;
+    Iframe: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -422,14 +429,19 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
       true
     >;
     publishedAt: Schema.Attribute.DateTime;
+    Show: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    Stack: Schema.Attribute.String;
     Thumbnail: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     Title: Schema.Attribute.String;
     Type: Schema.Attribute.Enumeration<
-      ['Interactive', 'Static', 'Fashion', 'Engineering', 'Computer Music']
+      ['Interactive', 'Static', 'Rnd', 'Music']
     >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    Vimeo: Schema.Attribute.String;
+    Year: Schema.Attribute.String;
+    Youtube: Schema.Attribute.String;
   };
 }
 

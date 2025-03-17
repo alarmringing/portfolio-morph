@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --morphing-text-color: #000000;
+  --morphing-text-color: #e4dfe3ff;
   --accent-color: #eaffa3;
   --letter-muted-color: #2d3834;
   --primary-color: #e5bdff;
 
-  --gradient-begin-color: rgb(63, 63, 63);
-  --gradient-middle-color: rgb(18, 0, 134);
+  --gradient-begin-color: #47423eff;
+  --gradient-middle-color: rgb(14, 0, 102);
   --gradient-end-color: rgb(0, 44, 37);
 
   --noise-opacity: 0.3;
