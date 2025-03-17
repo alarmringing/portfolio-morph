@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { STRAPI_URL } from '@/strapi/strapi';
 import styles from './ProjectGrid.module.css';
 import { useProjects } from '../context/ProjectsContext';
@@ -23,9 +23,33 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
   const { projects, isLoading, hasMore, loadMore, activeFilter } = useProjects();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
-
-    // Inside your component
   const [expandedItemPosition, setExpandedItemPosition] = useState<'left' | 'right' | 'center' | null>(null);
+
+  // Generate random margin and padding values for each project based on its ID
+  const projectStyles = useMemo(() => {
+    const styles: Record<string, { marginBottom: number, paddingLeft: number }> = {};
+    
+    projects.forEach(project => {
+      // Use the documentId to seed the random number generator
+      // This ensures the same project always gets the same values
+      const seed = project.documentId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      
+      // Generate two different random values from the same seed
+      const random1 = ((seed % 100) / 100); // For margin-bottom
+      const random2 = (((seed * 31) % 100) / 100); // For padding-left (using a different formula)
+      
+      // Scale to appropriate ranges
+      const marginBottom = 2 + (random1 * 5); // 2-7 rem
+      const paddingLeft = 0 + (random2 * 6); // 1-4 rem
+      
+      styles[project.documentId] = {
+        marginBottom,
+        paddingLeft
+      };
+    });
+    
+    return styles;
+  }, [projects]);
 
   // Add this function to determine position
   const determinePosition = useCallback((element: HTMLElement) => {
@@ -33,19 +57,11 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
     
     const gridRect = gridRef.current.getBoundingClientRect();
     const elementRect = element.getBoundingClientRect();
-    
-    // Calculate the element's center position relative to the grid
-    const elementCenterX = elementRect.right;
-    const gridWidth = gridRect.width;
-    
-    // Determine position based on where the center of the element is
-    if (elementCenterX < gridWidth * 0.5) {
-      return 'left';
-    } else if (elementCenterX > gridWidth * 0.5) {
+
+    if (elementRect.right > gridRect.right - elementRect.width) {
       return 'right';
-    } else {
-      return 'center';
     }
+
   }, []);
 
   // Handle project click based on available content
@@ -107,7 +123,7 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
           masonry: {
             columnWidth: `.${styles.gridItem}`,
             horizontalOrder: false,
-            gutter: 30,
+            gutter: 0,
           },
           stagger: 20,
           transitionDuration: '0.8s',
@@ -193,6 +209,8 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
   useEffect(() => {
     if (!isotope.current) return;
 
+    setExpandedItemId(null);
+
     const sanitizeSelector = (selector: string): string => {
       // Replace problematic characters with escaped versions
       return selector.toLowerCase()
@@ -216,9 +234,15 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
         {projects.map((project) => {
           const imageUrl = project.Thumbnail ? 
             `${STRAPI_URL}${project.Thumbnail.url}` : null;
+          
+          // Get the random margin for this project
+          const marginBottom = projectStyles[project.documentId].marginBottom;
+          const paddingLeft = projectStyles[project.documentId].paddingLeft;
+          
           return (
             <button 
               key={project.documentId} 
+              style={{ marginBottom: `${marginBottom}rem`, paddingLeft: `${paddingLeft}rem` }}
               className={`
                 ${styles.gridItem} 
                 ${project.Type?.toLowerCase()} 

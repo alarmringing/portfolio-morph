@@ -1,6 +1,6 @@
 .grid {
   width: 100%;
-  max-width: 90rem; /* max-w-6xl = 72rem */
+  max-width: 100rem; /* max-w-6xl = 72rem */
   margin-left: auto;
   min-height: 31.25rem; /* 500px = 31.25rem */
 }
@@ -10,8 +10,6 @@
   right: 0;
   max-width: 300px;
   padding-right: 0rem;
-  margin-bottom: 7rem; 
-
 }
 
 .gridItem.expanded {
