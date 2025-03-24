@@ -12,6 +12,53 @@ interface ProjectMediaGridProps {
   media: any[];
 }
 
+interface MediaGridItemProps {
+  media: any;
+  projectTitle: string;
+  isExpanded: boolean;
+  expandedPosition: 'left' | 'right' | 'center' | null;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+// MediaGridItem component for displaying media items in the grid
+const MediaGridItem = ({ media, projectTitle, isExpanded, expandedPosition, onClick }: MediaGridItemProps) => {
+  if (!media || !media.mime?.startsWith('image/')) return null;
+  
+  // Get random margins and padding for this media item
+  const { marginBottom, paddingRight } = generateRandomLayout(media.id);
+      
+  return (
+    <button 
+      className={`
+        ${gridStyles.featured}
+        ${gridStyles.gridItem}
+        ${isExpanded ? gridStyles.expanded : ''}
+        ${isExpanded && expandedPosition === 'left' ? gridStyles.expandedLeft : ''}
+      `}
+      style={{ 
+        marginBottom: `${marginBottom}rem`, 
+        paddingRight: `${paddingRight}rem` 
+      }}
+      onClick={onClick}
+    >
+      <div className={gridStyles.gridItemInnerContainer}>
+        <div className={gridStyles.imageContainer}>
+          <img
+            src={`${STRAPI_URL}${media.url}`}
+            alt={media.alternativeText || projectTitle}
+            loading="lazy"
+          />
+        </div>
+        {media.caption && (
+          <div className={gridStyles.textContainer}>
+            <p>{media.caption}</p>
+          </div>
+        )}
+      </div>
+    </button>
+  );
+};
+
 export default function ProjectMediaGrid({ project, media }: ProjectMediaGridProps) {
   const mediaGridRef = useRef<HTMLDivElement>(null);
   const [expandedMediaId, setExpandedMediaId] = useState<number | null>(null);
@@ -33,56 +80,23 @@ export default function ProjectMediaGrid({ project, media }: ProjectMediaGridPro
     }
   };
 
-  // Function to render media in grid layout (images only)
-  const renderMediaGridItem = (media: any, index: number) => {
-    if (!media || !media.mime?.startsWith('image/')) return null;
-    
-    // Get random margins and padding for this media item
-    const { marginBottom, paddingLeft } = generateRandomLayout(media.id);
-    
-    const isExpanded = expandedMediaId === media.id;
-    
-    return (
-      <button 
-        key={index}
-        className={`
-          ${gridStyles.featured}
-          ${gridStyles.gridItem}
-          ${isExpanded ? gridStyles.expanded : ''}
-          ${isExpanded && expandedMediaPosition === 'right' ? gridStyles.expandedRight : ''}
-        `}
-        style={{ 
-          marginBottom: `${marginBottom}rem`, 
-          paddingLeft: `${paddingLeft}rem` 
-        }}
-        onClick={(e) => handleMediaClick(media.id, e.currentTarget)}
-      >
-        <div className={gridStyles.gridItemInnerContainer}>
-          <div className={gridStyles.imageContainer}>
-            <img
-              src={`${STRAPI_URL}${media.url}`}
-              alt={media.alternativeText || project.Title}
-              loading="lazy"
-            />
-          </div>
-          {media.caption && (
-            <div className={gridStyles.textContainer}>
-              <p>{media.caption}</p>
-            </div>
-          )}
-        </div>
-      </button>
-    );
-  };
-
   return (
     <div ref={mediaGridRef}>
       <IsotopeGrid 
         itemSelector={`.${gridStyles.gridItem}`}
-        projects={[project]}
-        filter={undefined}
+        projects={media}
+        filter={'*'}
       >
-        {media.map((media, index) => renderMediaGridItem(media, index))}
+        {media.map((mediaItem, index) => (
+          <MediaGridItem
+            key={index}
+            media={mediaItem}
+            projectTitle={project.Title}
+            isExpanded={expandedMediaId === mediaItem.id}
+            expandedPosition={expandedMediaPosition}
+            onClick={(e) => handleMediaClick(mediaItem.id, e.currentTarget)}
+          />
+        ))}
       </IsotopeGrid>
     </div>
   );

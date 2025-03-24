@@ -93,28 +93,6 @@ a:hover {
   line-height: normal;
   color: var(--primary-color);
 }
-/* 
-:lang(en) {
-  font-family: "Syne", sans-serif;
-}
-:lang(ko) {
-  font-family: "NotoSerifCJK", serif;
-}
-:lang(ja) {
-  font-family: "NotoSansCJKP", sans-serif;
-} */
-
-
-
-
-/* 
-.cjk-font {
-  font-family: 'NotoSansCJK', sans-serif;
-}
-
-.latin-font {
-  font-family: 'Syne', sans-serif;
-} */
 
 button {
   color: var(--primary-color);

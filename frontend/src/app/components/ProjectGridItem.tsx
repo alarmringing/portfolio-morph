@@ -8,7 +8,7 @@ import { FilterType } from '../context/ProjectsContext';
 interface ProjectGridItemProps {
   project: any;
   marginBottom: number;
-  paddingLeft: number;
+  paddingRight: number;
   showType: boolean;
   isExpanded: boolean;
   expandedPosition: 'left' | 'right' | 'center' | null;
@@ -18,7 +18,7 @@ interface ProjectGridItemProps {
 export function ProjectGridItem({
   project,
   marginBottom,
-  paddingLeft,
+  paddingRight,
   showType,
   isExpanded,
   expandedPosition,
@@ -38,7 +38,7 @@ export function ProjectGridItem({
 
   return (
     <button 
-      style={{ marginBottom: `${marginBottom}rem`, paddingLeft: `${paddingLeft}rem` }}
+      style={{ marginBottom: `${marginBottom}rem`, paddingRight: `${paddingRight}rem` }}
       className={`
         ${styles.gridItem} 
         ${project.Type?.toLowerCase()} 

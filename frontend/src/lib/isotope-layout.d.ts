@@ -1,6 +1,7 @@
 declare module 'isotope-layout' {
   interface IsotopeOptions {
     itemSelector: string;
+    originLeft: boolean;
     layoutMode: string;
     masonry?: {
       columnWidth: string;

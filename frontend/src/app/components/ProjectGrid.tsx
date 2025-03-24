@@ -19,18 +19,18 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
 
   // Generate random margin and padding values for each project based on its ID
   const projectStyles = useMemo(() => {
-    const styles: Record<string, { marginBottom: number, paddingLeft: number }> = {};
+    const styles: Record<string, { marginBottom: number, paddingRight: number }> = {};
     
     projects.forEach(project => {
       // Get random layout values using our utility function
-      const { marginBottom, paddingLeft } = generateRandomLayout(project.documentId, 
+      const { marginBottom, paddingRight } = generateRandomLayout(project.documentId, 
         // Apply custom factor based on project type
         project.Type === FilterType.Static ? 1 : 1.5
       );
       
       styles[project.documentId] = {
         marginBottom,
-        paddingLeft
+        paddingRight
       };
     });
     
@@ -148,7 +148,7 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
               key={project.documentId}
               project={project}
               marginBottom={projectStyles[project.documentId].marginBottom}
-              paddingLeft={projectStyles[project.documentId].paddingLeft}
+              paddingRight={projectStyles[project.documentId].paddingRight}
               showType={Boolean(project.Type && activeFilter === FilterType.All && project.Type !== FilterType.None)}
               isExpanded={expandedItemId === project.documentId}
               expandedPosition={expandedItemId === project.documentId ? expandedItemPosition : null}

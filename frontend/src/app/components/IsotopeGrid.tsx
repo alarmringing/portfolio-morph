@@ -27,11 +27,11 @@ export function generateRandomLayout(id: string | number, customFactor: number =
   
   // Scale to appropriate ranges
   const marginBottom = 2 + (random1 * 3 * customFactor); // 2-5 rem
-  const paddingLeft = 1 + (random2 * 2 * customFactor); // 1-3 rem
+  const paddingRight = 1 + (random2 * 2 * customFactor); // 1-3 rem
   
   return {
     marginBottom,
-    paddingLeft
+    paddingRight
   };
 }
 
@@ -43,16 +43,16 @@ export function determineExpandPosition(
   // If we have a RefObject, use its current property
   const grid = 'current' in gridContainer ? gridContainer.current : gridContainer;
   
-  if (!element || !grid) return 'left';
+  if (!element || !grid) return 'right';
   
   const gridRect = grid.getBoundingClientRect();
   const elementRect = element.getBoundingClientRect();
 
-  if (elementRect.right > gridRect.right - elementRect.width) {
-    return 'right';
+  if (elementRect.left < gridRect.left + elementRect.width) {
+    return 'left';
   }
 
-  return 'left';
+  return 'right';
 }
 
 export default function IsotopeGrid({ 
@@ -86,7 +86,8 @@ export default function IsotopeGrid({
             horizontalOrder: false,
             gutter: 0,
           },
-          stagger: 20,
+          stagger: 0,
+          originLeft: false,
           transitionDuration: '0.8s',
           hiddenStyle: {
             opacity: 0
