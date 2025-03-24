@@ -40,10 +40,9 @@ strong {
   position: relative;
 }
 
-.gradient-background::before,
-.fixed-background::before {
+body::before {
   content: '';
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
