@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { AboutData } from '@/strapi/StrapiData'
 import { renderNode } from '@/strapi/StrapiRenderNodes'
-import { FilterType } from './components/ProjectGrid'
+import { FilterType } from './context/ProjectsContext';
 import ProjectGrid from './components/ProjectGrid'
 import { getAbout } from '@/strapi/strapi'
 import ProjectFilterButton from './components/ProjectButtonFilter'
@@ -45,7 +45,7 @@ export default function Home() {
   };
 
   return (
-    <div style={fadeTransitionStyle(isEntering)}>
+    <div style={fadeTransitionStyle(isEntering)} className="h-100vh">
       {/* Spacer to push content below viewport */}
       <div className="h-screen" />
       

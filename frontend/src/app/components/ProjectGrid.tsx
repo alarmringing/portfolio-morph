@@ -1,24 +1,16 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { STRAPI_URL } from '@/strapi/strapi';
-import styles from './ProjectGrid.module.css';
-import { useProjects } from '../context/ProjectsContext';
-
-export enum FilterType {
-    All = 'all',
-    Interactive = 'interactive',
-    Static = 'static',
-    Rnd = 'rnd',
-    Music = 'music',
-}
+import styles from './IsotopeGrid.module.css';
+import { useProjects, FilterType } from '../context/ProjectsContext';
+import { ProjectGridItem } from './ProjectGridItem';
+import IsotopeGrid, { determineExpandPosition, generateRandomLayout } from './IsotopeGrid';
 
 interface ProjectGridProps {
     onGridClick: (documentId: string) => void;
 }
 
 export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
-  const isotope = useRef<any>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const { projects, isLoading, hasMore, loadMore, activeFilter } = useProjects();
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -30,17 +22,11 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
     const styles: Record<string, { marginBottom: number, paddingLeft: number }> = {};
     
     projects.forEach(project => {
-      // Use the documentId to seed the random number generator
-      // This ensures the same project always gets the same values
-      const seed = project.documentId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      
-      // Generate two different random values from the same seed
-      const random1 = ((seed % 100) / 100); // For margin-bottom
-      const random2 = (((seed * 31) % 100) / 100); // For padding-left (using a different formula)
-      
-      // Scale to appropriate ranges
-      const marginBottom = 2 + (random1 * 5); // 2-7 rem
-      const paddingLeft = 0 + (random2 * 6); // 1-4 rem
+      // Get random layout values using our utility function
+      const { marginBottom, paddingLeft } = generateRandomLayout(project.documentId, 
+        // Apply custom factor based on project type
+        project.Type === FilterType.Static ? 1 : 1.5
+      );
       
       styles[project.documentId] = {
         marginBottom,
@@ -51,21 +37,8 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
     return styles;
   }, [projects]);
 
-  // Add this function to determine position
-  const determinePosition = useCallback((element: HTMLElement) => {
-    if (!element || !gridRef.current) return null;
-    
-    const gridRect = gridRef.current.getBoundingClientRect();
-    const elementRect = element.getBoundingClientRect();
-
-    if (elementRect.right > gridRect.right - elementRect.width) {
-      return 'right';
-    }
-
-  }, []);
-
   // Handle project click based on available content
-  const handleProjectClick = (project: any, gridRef: HTMLElement) => {
+  const handleProjectClick = (project: any, element: HTMLElement) => {
     // Case 1: If there is a description, navigate to project page
     if (project.Description) {
       onGridClick(project.documentId);
@@ -89,8 +62,8 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
     }
     
     // Case 3: If there is neither description nor URLs, expand the item
-    if (gridRef) {
-      const position = determinePosition(gridRef);
+    if (element) {
+      const position = determineExpandPosition(element, gridRef);
       setExpandedItemPosition(position);
     }
     if (expandedItemId === project.documentId) {
@@ -100,70 +73,7 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
       // Expand this item
       setExpandedItemId(project.documentId);
     }
-    
   };
-
-  // Initialize Isotope after component mounts and projects are loaded
-  useEffect(() => {
-    const grid = gridRef.current;
-    if (!grid || !projects.length) return;
-
-    let isotopeInstance: any = null;
-
-    const initIsotope = async () => {
-      if (typeof window !== 'undefined') {
-        const [Isotope, imagesLoaded] = await Promise.all([
-          import('isotope-layout'),
-          import('imagesloaded'),
-        ]);
-
-        isotopeInstance = new Isotope.default(grid, {
-          itemSelector: `.${styles.gridItem}`,
-          layoutMode: 'masonry',
-          masonry: {
-            columnWidth: `.${styles.gridItem}`,
-            horizontalOrder: false,
-            gutter: 0,
-          },
-          stagger: 20,
-          transitionDuration: '0.8s',
-          hiddenStyle: {
-            opacity: 0
-          },
-          visibleStyle: {
-            opacity: 1
-          }
-        });
-
-        // Now TypeScript understands the imagesLoaded API
-        imagesLoaded.default(grid).on('progress', () => {
-          if (isotopeInstance) {
-            isotopeInstance.layout();
-          }
-        });
-
-        isotope.current = isotopeInstance;
-
-        // Apply initial filter if needed
-      if (activeFilter !== FilterType.All) {
-        isotopeInstance.arrange({
-          filter: `.${activeFilter.toLowerCase()}`,
-          transitionDuration: 0
-        });
-      }
-      }
-    };
-
-    // Initialize Isotope
-    initIsotope();
-
-    // Cleanup
-    return () => {
-      if (isotopeInstance) {
-        isotopeInstance.destroy();
-      }
-    };
-  }, [projects]);
 
    // Setup Intersection Observer for infinite scroll
    useEffect(() => {
@@ -205,12 +115,8 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
     };
   }, [projects]);
 
-  // Handle filter changes
-  useEffect(() => {
-    if (!isotope.current) return;
-
-    setExpandedItemId(null);
-
+  // Calculate filter value
+  const filterValue = useMemo(() => {    
     const sanitizeSelector = (selector: string): string => {
       // Replace problematic characters with escaped versions
       return selector.toLowerCase()
@@ -218,63 +124,38 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
         .replace(/[^a-z0-9-_]/g, '') // Remove any other special characters
         .trim();
     };
-    
-    
     const filterValue = activeFilter === FilterType.All ? '*' : `.${sanitizeSelector(activeFilter)}`;
-    console.log(filterValue);
-    isotope.current.arrange({ filter: filterValue });
+    return filterValue;
   }, [activeFilter]);
 
+  // Handle expanding items - reset any expanded items when filter changes
+  useEffect(() => {
+    setExpandedItemId(null);
+  }, [activeFilter]);
+  
   return (
     <div>
-      <div ref={gridRef} className={styles.grid}>
-        {isLoading && <div style={{textAlign: 'center'}}>Loading projects...</div>}
-        <div className={styles.gridSizer}></div>
-        
-        {projects.map((project) => {
-          const imageUrl = project.Thumbnail ? 
-            `${STRAPI_URL}${project.Thumbnail.url}` : null;
+      <div ref={gridRef}>
+        <IsotopeGrid 
+          projects={projects}
+          itemSelector={`.${styles.gridItem}`}
+          filter={filterValue}
+        >
+          {isLoading && <div style={{textAlign: 'center'}}>Loading projects...</div>}
           
-          // Get the random margin for this project
-          const marginBottom = projectStyles[project.documentId].marginBottom;
-          const paddingLeft = projectStyles[project.documentId].paddingLeft;
-          
-          return (
-            <button 
-              key={project.documentId} 
-              style={{ marginBottom: `${marginBottom}rem`, paddingLeft: `${paddingLeft}rem` }}
-              className={`
-                ${styles.gridItem} 
-                ${project.Type?.toLowerCase()} 
-                ${expandedItemId === project.documentId ? styles.expanded : ''} 
-                ${expandedItemId === project.documentId && expandedItemPosition === 'left' ? styles.expandedLeft : ''}
-                ${expandedItemId === project.documentId && expandedItemPosition === 'right' ? styles.expandedRight : ''}
-                ${expandedItemId === project.documentId && expandedItemPosition === 'center' ? styles.expandedCenter : ''}
-              `}
-              onClick={(e) => handleProjectClick(project, e.currentTarget)}
-            >
-              <div className={styles.gridItemInnerContainer}>
-              <div className={styles.imageContainer}>
-                {project.Thumbnail ? (
-                  <img
-                    src={imageUrl!}
-                    alt={project.Title}
-                    loading="lazy"
-                  />
-                ) : (
-                  <div>No Image</div>
-                )}
-              </div>
-              <div className={styles.textContainer} >
-                <h3>{project.Title}</h3>
-                {project.Type && activeFilter == FilterType.All && (
-                  <p>{project.Type == FilterType.Rnd ? 'R&D' : project.Type}</p>
-                )}
-                </div>
-              </div>
-            </button>
-          );
-        })}
+          {projects.map((project) => (
+            <ProjectGridItem
+              key={project.documentId}
+              project={project}
+              marginBottom={projectStyles[project.documentId].marginBottom}
+              paddingLeft={projectStyles[project.documentId].paddingLeft}
+              showType={Boolean(project.Type && activeFilter === FilterType.All && project.Type !== FilterType.None)}
+              isExpanded={expandedItemId === project.documentId}
+              expandedPosition={expandedItemId === project.documentId ? expandedItemPosition : null}
+              onClick={(element) => handleProjectClick(project, element)}
+            />
+          ))}
+        </IsotopeGrid>
       </div>
     </div>
   );

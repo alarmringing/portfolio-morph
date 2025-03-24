@@ -8,6 +8,11 @@ declare module 'isotope-layout' {
       originLeft?: boolean;
       horizontalOrder?: boolean;
     };
+    packery?: {
+      gutter?: number;
+      columnWidth?: string | number;
+      rowHeight?: string | number;
+    };
     transitionDuration?: string;
     stagger?: number;
     hiddenStyle?: {
@@ -16,6 +21,7 @@ declare module 'isotope-layout' {
     visibleStyle?: {
       opacity: number;
     };
+    filter?: string;
   }
 
   class Isotope {
@@ -25,5 +31,6 @@ declare module 'isotope-layout' {
     arrange(options?: Partial<IsotopeOptions>): void;
   }
 
-  export = Isotope;
+  export default Isotope;
 } 
+

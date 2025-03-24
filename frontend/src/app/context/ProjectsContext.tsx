@@ -3,7 +3,16 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { ProjectData } from '@/strapi/StrapiData';
 import { getProjectsGrid } from '@/strapi/strapi';
-import { FilterType } from '../components/ProjectGrid';
+
+export enum FilterType {
+  All = 'All',
+  Interactive = 'Interactive',
+  Static = 'Static',
+  Rnd = 'Rnd',
+  Music = 'Music',
+  None = 'None'
+}
+
 
 interface ProjectsContextType {
   projects: ProjectData[];

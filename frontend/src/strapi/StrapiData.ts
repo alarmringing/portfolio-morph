@@ -2,6 +2,7 @@
 export interface TextNode {
   type: 'text';
   text: string;
+  bold?: boolean;
 }
 
 export interface LinkNode {

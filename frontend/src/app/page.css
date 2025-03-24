@@ -20,6 +20,11 @@ html, body {
   padding: 0;
   height: 100%;
   overflow-anchor: none;
+  background: var(--gradient-end-color);
+}
+
+strong { 
+  font-weight: bold; 
 }
 
 /* Container for the full gradient background */
@@ -67,9 +72,16 @@ a:hover {
   text-decoration: underline;
 }
 
-.header-text {
+.h1 {
   font-size: 2rem;
-  font-weight: 100;
+}
+
+.h2 {
+  font-size: 1.5rem;
+}
+
+.h3 {
+  font-size: 1.2rem;
 }
 
 .navbar-text {
@@ -81,14 +93,28 @@ a:hover {
   line-height: normal;
   color: var(--primary-color);
 }
+/* 
+:lang(en) {
+  font-family: "Syne", sans-serif;
+}
+:lang(ko) {
+  font-family: "NotoSerifCJK", serif;
+}
+:lang(ja) {
+  font-family: "NotoSansCJKP", sans-serif;
+} */
 
+
+
+
+/* 
 .cjk-font {
   font-family: 'NotoSansCJK', sans-serif;
 }
 
 .latin-font {
   font-family: 'Syne', sans-serif;
-}
+} */
 
 button {
   color: var(--primary-color);

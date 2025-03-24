@@ -1,0 +1,259 @@
+/* Common variables */
+:root {
+  --max-width: 64rem;
+  --gap: 2rem;
+}
+
+/* Main container */
+.container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem 4rem;
+}
+
+/* Base section styles - applied to various content sections */
+.section {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto 2rem;
+}
+
+/* Back button */
+.backButton {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 30;
+}
+
+/* Header section */
+.header, .heroSection, .mediaSection { composes: section; }
+.header { text-align: center; }
+
+.title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  text-align: center;
+}
+
+.metaInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.metaInfoItem {
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Content area */
+.contentArea {
+  width: 100%;
+}
+
+/* Description sections */
+.descriptionPrimary, .descriptionSecondary {
+  composes: section;
+}
+
+/* Hero section */
+.heroSection {
+  composes: section;
+}
+
+/* Media section */
+.mediaSection {
+  composes: section;
+}
+
+/* Section with spaced children */
+.sectionWithSpacing {
+  composes: section;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* Media containers */
+.mediaContainer, .videoContainer, .audioPlayer { width: 100%; }
+
+.mediaImage {
+  width: 100%;
+  height: auto;
+}
+
+.mediaCaption {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Video container */
+.videoContainer {
+  position: relative;
+}
+
+/* PDF container */
+.aspectPdf {
+  aspect-ratio: 4 / 3;
+}
+
+/* Audio player */
+.audioPlayer {
+  width: 100%;
+}
+
+/* iFrame */
+.iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  border: 0;
+}
+
+/* Description spacing */
+.descriptionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Media links section */
+.embed {
+  composes: section;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  width: 100%;
+  max-width: 85%;
+  margin: var(--gap) auto;
+}
+
+.embed .videoContainer {
+  position: relative;
+  width: 100%;
+  max-width: 70rem;
+  max-height: 50rem;
+  overflow: hidden;
+}
+
+.embed .videoContainer iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Desktop layout */
+@media (min-width: 1024px) {
+  .container {
+    display: grid;
+    grid-template-columns: 45% 45%;
+    grid-template-rows: auto auto auto auto auto 1fr;
+    grid-template-areas: 
+      "back back"
+      "header header"
+      "content hero"
+      "embed embed"
+      "description description"
+      "media media";
+    gap: var(--gap);
+    justify-content: space-between;
+    align-items: start;
+    position: relative;
+  }
+  
+  .backButton {
+    grid-area: back;
+  }
+  
+  .header {
+    grid-area: header;
+    margin: 0 auto var(--gap);
+    max-width: var(--max-width);
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .contentArea {
+    grid-area: content;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 30em;
+  }
+
+  .embed {
+    grid-area: embed;
+    max-width: 85%;
+    margin: var(--gap) auto;
+  }
+  
+  .embed .videoContainer {
+    min-height: 600px;
+  }
+  
+  .descriptionPrimary {
+    /* Description that appears in the left column */
+    margin: 0 0 var(--gap);
+  }
+  
+  .descriptionSecondary {
+    /* Description that appears below both columns */
+    grid-area: description;
+    margin: 0 auto var(--gap);
+    max-width: 45em;
+  }
+  
+  .heroSection {
+    grid-area: hero;
+    margin: 0;
+    max-width: none;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .heroSection > div {
+    width: 100%;
+    max-height: 100%;
+  }
+  
+  .mediaSection {
+    grid-area: media;
+    max-width: 85%;
+  }
+  
+  .heroSection .videoContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .heroSection .videoContainer iframe,
+  .heroSection .videoContainer video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    max-height: 80vh;
+  }
+  
+  .heroSection .iframe {
+    min-height: 400px;
+  }
+  
+  .metaInfo {
+    justify-content: center;
+    width: 100%;
+  }
+} 
