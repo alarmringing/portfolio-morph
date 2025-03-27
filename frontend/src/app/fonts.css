@@ -41,7 +41,7 @@
 
 @font-face {
   font-family: "JapaneseFont";
-  src: url("/fonts/MPLUSRounded1c-Regular.ttf") format('truetype');
+  src: url("/fonts/ZenMaruGothic-Regular.ttf") format('truetype');
   unicode-range: U+3040-30FF,    /* Hiragana & Katakana */
                 U+4E00-9FFF,    /* CJK Unified Ideographs (Common Chinese/Japanese) */
                 U+3400-4DBF,    /* CJK Unified Ideographs Extension A */

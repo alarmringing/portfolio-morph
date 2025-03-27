@@ -104,6 +104,12 @@ export default function IsotopeGrid({
           }
         });
 
+        imagesLoaded.default(grid).on('done', () => {
+            if (isotopeInstance) {
+              isotopeInstance.layout();
+            }
+          });
+
         isotope.current = isotopeInstance;
       }
     };
