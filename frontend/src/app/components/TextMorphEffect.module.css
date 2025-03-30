@@ -10,6 +10,7 @@
   filter: url(#threshold) blur(0.6px);
   position: relative;
   display: flex;
+  top: 50vh;
   justify-content: center;
   align-items: center;
   margin: 0 auto;
@@ -17,7 +18,6 @@
   text-align: center;
   height: auto;
 }
-
 
 .text {
   position: absolute;
@@ -29,5 +29,6 @@
   align-items: center;
   white-space: nowrap;
 
+  text-shadow:  var(--morphing-text-color-shadow) var(--text-shadow-offset-x, 2px) var(--text-shadow-offset-y, 3px) var(--text-shadow-blur-radius, 0px);
   font-variation-settings: var(--mono), var(--casl), var(--wght), var(--slnt), var(--CRSV);
 }

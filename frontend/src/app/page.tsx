@@ -73,7 +73,7 @@ export default function Home() {
               onGridClick={handleGridClick}
             />
           </div>
-          <div className="bottom-8 left-8 flex flex-col z-30" style={{position: 'sticky'}}>
+          <div className="filterbuttons">
             <ProjectFilterButton 
               filter={FilterType.All}
             />

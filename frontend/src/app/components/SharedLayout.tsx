@@ -3,10 +3,12 @@ import TextMorphEffect from './TextMorphEffect';
 import Navbar from './Navbar';
 import { GlyphType } from '../utils/textUtils';
 import { clamp } from 'three/src/math/MathUtils.js';
+import SceneWrapper from '../canvas/SceneWrapper';
 import { usePathname, useRouter } from 'next/navigation';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import '../page.css';
 import '../fonts.css';
+import MouseEffect from './MouseEffect';
 
 interface SharedLayoutProps {
   children: React.ReactNode;
@@ -19,6 +21,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   const [isPortrait, setIsPortrait] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [pendingScroll, setPendingScroll] = useState<string | null>(null);
+  const [isNavItemHovered, setIsNavItemHovered] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -89,6 +92,10 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     }
   }, [pathname, router]);
 
+  const handleNavItemHover = useCallback((isHovered: boolean) => {
+    setIsNavItemHovered(isHovered);
+  }, []);
+
   const morphingTextColor = `color-mix(in srgb, var(--morphing-text-color) ${100 - (scrollProgress * 100)}%, var(--letter-muted-color) ${scrollProgress * 100}%)`;
 
   // Determine background class based on the current route
@@ -96,26 +103,40 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
 
   return (
     <div className={backgroundClass}>
+      {/* Mouse effect overlay needs to be at the top level
+      <MouseEffect isNavItemHovered={isNavItemHovered} scrollProgress={scrollProgress} /> */}
+      
       {/* Hero section with morphing text */}
       <div 
-        className="fixed top-1/2 left-0 w-full"
+        className="fixed left-0 w-full"
         style={{
           filter: `blur(${scrollProgress * 15}px)`,
         }}
       >
-        <TextMorphEffect 
-          texts={[
-            { text: 'Jihee', font: 'BagelFatOne, monospace', glyphType: GlyphType.L },
-            { text: '지희', font: 'BagelFatOne, serif', glyphType: GlyphType.K },
-            { text: 'ジヒ', font: 'PottaOne, serif', glyphType: GlyphType.J },
-            { text: '智熙', font: 'PottaOne, serif', glyphType: GlyphType.C }
-          ]} 
-          width={70}
-          defaultFont='NotoSerifCJK, serif'
-          isPortrait={isPortrait}
-          textColor={morphingTextColor}
-          threshold={-140}
-        />
+        {/* Create a stack with proper blend context */}
+        <div className="relative w-full h-full">
+          {/* Scene container - moved to be under the text
+          <div className="absolute inset-0" style={{ zIndex: 1 }}>
+            <SceneWrapper/>         
+          </div> */}
+
+          {/* Text morphing container positioned over the scene */}
+          <div className="absolute inset-0" style={{ zIndex: 2, mixBlendMode: 'multiply'}}>
+            <TextMorphEffect  
+              texts={[
+                { text: 'Jihee', font: 'BagelFatOne, monospace', glyphType: GlyphType.L },
+                { text: '지희', font: 'BagelFatOne, serif', glyphType: GlyphType.K },
+                { text: 'ジヒ', font: 'PottaOne, serif', glyphType: GlyphType.J },
+                { text: '智熙', font: 'PottaOne, serif', glyphType: GlyphType.C }
+              ]} 
+              width={70}
+              defaultFont='NotoSerifCJK, serif'
+              isPortrait={isPortrait}
+              textColor={morphingTextColor}
+              threshold={-140}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Navbar */}
@@ -123,6 +144,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
         <Navbar 
           onAboutClick={() => scrollToSection('about')}
           onProjectsClick={() => scrollToSection('projects')}
+          onNavItemHover={handleNavItemHover}
         />
       </div>
 

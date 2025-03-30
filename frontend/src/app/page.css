@@ -1,16 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --morphing-text-color: #e4dfe3ff;
+  --morphing-text-color:#e4dfe3ff;
+  --morphing-text-color-shadow: rgb(14, 0, 102);
   --accent-color: #eaffa3;
   --letter-muted-color: #2d3834;
   --primary-color: #e5bdff;
 
+
   --gradient-begin-color: #47423eff;
+  
+
   --gradient-middle-color: rgb(14, 0, 102);
   --gradient-end-color: rgb(0, 44, 37);
 
   --noise-opacity: 0.3;
+ 
+  --cursor-color:  #000000ff;
+  --morphing-text-color:#000000;
+  --moon-color: #e4dfe3ff;
+/*
+  --gradient-begin-color: rgb(14, 0, 102);
+  --primary-color: #e4dfe3ff;
+ --accent-color: rgb(189, 0, 0); */
 }
 
 
@@ -84,7 +96,7 @@ a:hover {
 }
 
 .navbar-text {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .content-text {
@@ -106,4 +118,23 @@ button:hover {
 
 .button-selected {
   color: var(--accent-color);
+}
+
+/* Filter buttons container styling */
+.filterbuttons {
+  position: sticky;
+  bottom: 2rem;
+  left: 2rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+  /* Ensure it's above other content */
+  pointer-events: auto;
+}
+
+/* For screens that have issues with sticky positioning */
+@media (max-height: 500px) {
+  .filterbuttons {
+    position: fixed; /* Fallback to fixed for small screens */
+  }
 }

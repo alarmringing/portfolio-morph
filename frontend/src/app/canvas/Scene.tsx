@@ -1,12 +1,11 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import MorphingText from './MorphingText'
 
 function Box() {
   return (
     <mesh>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="orange" />
+      <boxGeometry args={[4, 4, 1]} />
+      <meshStandardMaterial color="#ffffff00" />
     </mesh>
   )
 }
@@ -14,9 +13,13 @@ function Box() {
 export default function Scene() {
   return (
     <div className="h-screen w-full">
-      <Canvas>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
+      <Canvas 
+        style={{ 
+          background: 'transparent',
+          mixBlendMode: 'normal'
+        }}
+      >
+        <ambientLight intensity={1.0} />
         <Box />
         <OrbitControls 
           enableZoom={false}
