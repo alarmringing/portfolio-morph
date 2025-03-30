@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import styles from './TextMorphEffect.module.css'
 import { isCJKText, classifyGlyph, GlyphType, isCJKGlyph } from '../utils/textUtils';
-import gsap from 'gsap'; // Import GSAP
+import { useMouseReactiveStyles } from '../hooks/useMouseReactiveStyles';
 
 // Define a custom type for our style object that includes textOrientation
 interface TextStyleProps {
@@ -50,9 +50,6 @@ export default function TextMorphEffect({
     morph: 0,
     cooldown: cooldownTime,
   });
-  // Ref to hold the current smoothed mouse coordinates for GSAP animation
-  // Initialize with 0,0 - will be set to center on client mount
-  const smoothedMouseRef = useRef({ x: 0, y: 0 }); 
   
   // Normalize texts to ensure font is set
   const normalizedTexts = texts.map(item => ({
@@ -189,88 +186,8 @@ export default function TextMorphEffect({
     };
   }, [normalizedTexts, morphTime, cooldownTime, isPortrait, defaultFont]);
 
-  // Effect to set initial mouse position and handle movement/shadow animation
-  useEffect(() => {
-    // Set initial position to center only on the client
-    smoothedMouseRef.current = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-
-    const animationTarget = smoothedMouseRef.current; // GSAP will tween the x/y properties
-
-    const updateShadowProperties = () => {
-      if (!containerRef.current) return;
-
-      // Calculate everything based on the current smoothed mouse position
-      const { x: smoothedX, y: smoothedY } = animationTarget; 
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-      const deltaX = smoothedX - centerX;
-      const deltaY = smoothedY - centerY;
-      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-      const maxDist = Math.sqrt(Math.pow(centerX, 2) + Math.pow(centerY, 2));
-      var normalizedDistance = maxDist === 0 ? 0 : Math.min(distance / maxDist, 1);
-      normalizedDistance = Math.pow(normalizedDistance, 2); // Apply curve
-
-      // Calculate blur radius based on smoothed distance
-      const maxBlur = 5;
-      const blurRadius = maxBlur * normalizedDistance;
-
-      const maxOffsetIncrease = 15;
-
-      // Calculate offset magnitudes based on smoothed distance
-      const baseOffsetX = 2;
-      const totalOffsetXMagnitude = baseOffsetX + maxOffsetIncrease * normalizedDistance;
-      const baseOffsetY = 3;
-      const totalOffsetYMagnitude = baseOffsetY + maxOffsetIncrease * normalizedDistance;
-
-      let finalOffsetX = totalOffsetXMagnitude; // Default direction at center
-      let finalOffsetY = totalOffsetYMagnitude;
-
-      if (distance > 0.1) { // Use direction if not at center
-          const normDirectionX = -deltaX / distance;
-          const normDirectionY = -deltaY / distance;
-          finalOffsetX = totalOffsetXMagnitude * normDirectionX;
-          finalOffsetY = totalOffsetYMagnitude * normDirectionY;
-      }
-
-      // Update CSS variables directly
-      containerRef.current.style.setProperty('--text-shadow-blur-radius', `${blurRadius}px`);
-      containerRef.current.style.setProperty('--text-shadow-offset-x', `${finalOffsetX}px`);
-      containerRef.current.style.setProperty('--text-shadow-offset-y', `${finalOffsetY}px`);
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const mouseX = e.clientX;
-      const mouseY = e.clientY;
-      // No need to setMousePosition state if not used elsewhere
-
-      // Animate the smoothed mouse position values
-      gsap.to(animationTarget, {
-        x: mouseX, // Target raw mouse X
-        y: mouseY, // Target raw mouse Y
-        duration: 0.8, // Adjust duration for desired smoothness
-        ease: 'power1.out', 
-        overwrite: 'auto',
-        onUpdate: updateShadowProperties // Call the update function on each frame
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-
-    // Initialize shadow on mount based on initial smoothed position
-    updateShadowProperties(); 
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      // Kill GSAP tweens targeting this object on cleanup
-      gsap.killTweensOf(animationTarget);
-      // Optionally reset CSS variables
-      if (containerRef.current) {
-         containerRef.current.style.removeProperty('--text-shadow-blur-radius');
-         containerRef.current.style.removeProperty('--text-shadow-offset-x');
-         containerRef.current.style.removeProperty('--text-shadow-offset-y');
-      }
-    };
-  }, []); // Empty dependency array means run once on mount
+  // Use the custom hook for mouse reactivity
+  useMouseReactiveStyles(containerRef);
     
   // Create a style object for the container with dynamic sizing
   const containerStyle = isPortrait

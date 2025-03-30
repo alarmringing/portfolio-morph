@@ -8,22 +8,12 @@ import ProjectGrid from './components/ProjectGrid'
 import { getAbout } from '@/strapi/strapi'
 import ProjectFilterButton from './components/ProjectButtonFilter'
 import { useRouter } from 'next/navigation'
-import { fadeTransitionStyle, handlePageExitTransition, handlePageEnterTransition } from './utils/transitions'
+import { useTransition } from './components/SharedLayout';
 
 export default function Home() {
   const router = useRouter();
   const [aboutData, setAboutData] = useState<AboutData | null>(null)
-  const [isEntering, setIsEntering] = useState(false);
-  const isFirstLoad = useRef(true);
-
-  useEffect(() => {
-    if (isFirstLoad.current) {
-      setIsEntering(true);
-      isFirstLoad.current = false;
-    } else {
-      handlePageEnterTransition(setIsEntering);
-    }
-  }, []);
+  const { handlePageExit } = useTransition();
 
   useEffect(() => {
     const loadAboutData = async () => {
@@ -39,13 +29,13 @@ export default function Home() {
   }, []);
 
   const handleGridClick = (documentId: string) => {
-    handlePageExitTransition(setIsEntering, () => {
+    handlePageExit(() => {
       router.push(`/project/${documentId}`);
     });
   };
 
   return (
-    <div style={fadeTransitionStyle(isEntering)} className="h-100vh">
+    <div>
       {/* Spacer to push content below viewport */}
       <div className="h-screen" />
       

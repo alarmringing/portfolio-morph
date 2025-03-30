@@ -5,7 +5,7 @@ import { STRAPI_URL } from '@/strapi/strapi';
 import { renderNode } from '@/strapi/StrapiRenderNodes';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { fadeTransitionStyle, handlePageEnterTransition, handlePageExitTransition } from '../../utils/transitions';
+import { useTransition } from '../../components/SharedLayout';
 import { splitDescription } from '../../utils/descriptionUtils';
 import styles from './ProjectPage.module.css';
 import gridStyles from '../../components/IsotopeGrid.module.css';
@@ -18,7 +18,7 @@ interface ProjectPageProps {
 
 export default function ProjectPage({ project }: ProjectPageProps) {
   const router = useRouter();
-  const [isEntering, setIsEntering] = useState(false);
+  const { handlePageExit } = useTransition();
   const imageUrl = project.Thumbnail ? 
     `${STRAPI_URL}${project.Thumbnail.url}` : null;
   const [primaryDescription, secondaryDescription] = splitDescription(project.Description);
@@ -32,12 +32,8 @@ export default function ProjectPage({ project }: ProjectPageProps) {
   const regularImageMedia = !showImageGrid ? imageMedia : [];
   const gridImageMedia = showImageGrid ? imageMedia : [];
   
-  useEffect(() => {
-    handlePageEnterTransition(setIsEntering);
-  }, []);
-
   const handleBack = () => {
-    handlePageExitTransition(setIsEntering, () => {
+    handlePageExit(() => {
       router.push('/#projects');
     });
   };
@@ -107,7 +103,7 @@ export default function ProjectPage({ project }: ProjectPageProps) {
   };
 
   return (
-    <div className={styles.container} style={fadeTransitionStyle(isEntering)}>
+    <div className={styles.container}>
       {/* Back button */}
       <div className={styles.backButton}>
         <button onClick={handleBack} className="">

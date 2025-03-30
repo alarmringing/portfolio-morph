@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useCallback, createContext, useContext } from 'react';
 import TextMorphEffect from './TextMorphEffect';
 import Navbar from './Navbar';
 import { GlyphType } from '../utils/textUtils';
@@ -6,9 +6,27 @@ import { clamp } from 'three/src/math/MathUtils.js';
 import SceneWrapper from '../canvas/SceneWrapper';
 import { usePathname, useRouter } from 'next/navigation';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { TRANSITION_DURATION_S } from '../utils/transitions';
 import '../page.css';
 import '../fonts.css';
 import MouseEffect from './MouseEffect';
+
+// Define the context type
+interface TransitionContextType {
+  handlePageExit: (callback: () => void) => void;
+}
+
+// Create the context
+const TransitionContext = createContext<TransitionContextType | undefined>(undefined);
+
+// Custom hook to use the context
+export const useTransition = () => {
+  const context = useContext(TransitionContext);
+  if (context === undefined) {
+    throw new Error('useTransition must be used within a TransitionProvider');
+  }
+  return context;
+};
 
 interface SharedLayoutProps {
   children: React.ReactNode;
@@ -24,6 +42,32 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   const [isNavItemHovered, setIsNavItemHovered] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const [isEntering, setIsEntering] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+  const previousPathname = useRef(pathname);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasMounted) return;
+
+    if (pathname !== previousPathname.current) {
+      setIsEntering(false);
+      const timer = setTimeout(() => {
+        setIsEntering(true);
+      }, 10);
+
+      previousPathname.current = pathname;
+      return () => clearTimeout(timer);
+    } else {
+      const initialTimer = setTimeout(() => {
+        setIsEntering(true);
+      }, 10);
+      return () => clearTimeout(initialTimer);
+    }
+  }, [pathname, hasMounted]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,7 +83,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Call immediately to set initial state
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [pathname]);
 
@@ -54,13 +98,11 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     return () => window.removeEventListener('resize', checkOrientation);
   }, []);
 
-  // Execute scroll when we're on the homepage and have a pending scroll target
   useEffect(() => {
     if (pathname === '/' && pendingScroll) {
       const section = document.getElementById(pendingScroll);
       if (section && navbarRef.current) {
         const navbarHeight = navbarRef.current.offsetHeight;
-        // Use requestAnimationFrame to ensure the DOM is fully loaded
         requestAnimationFrame(() => {
           window.scrollTo({
             top: section.offsetTop - navbarHeight + window.innerHeight,
@@ -72,13 +114,20 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     }
   }, [pathname, pendingScroll]);
 
+  // Function to handle page exit: fades out then calls back
+  const handlePageExit = useCallback((callback: () => void) => {
+    setIsEntering(false); // Start fade out
+    setTimeout(callback, TRANSITION_DURATION_S * 1000); // Execute callback after duration
+  }, []); // TRANSITION_DURATION_S is constant, no dependency needed
+
   const scrollToSection = useCallback((sectionId: string) => {
-    // If not on homepage, navigate to homepage first
+    // If not on homepage, handle exit transition first
     if (pathname !== '/') {
-      // Set the pending scroll target before navigation
-      setPendingScroll(sectionId);
-      router.push('/');
-      return;
+      setPendingScroll(sectionId); // Still set pending scroll target
+      handlePageExit(() => { // <-- Now defined before use
+        router.push('/'); // <-- Navigate in the callback
+      });
+      return; // Return after initiating exit
     }
     
     // Already on homepage, scroll directly
@@ -90,7 +139,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
         behavior: 'smooth'
       });
     }
-  }, [pathname, router]);
+  }, [pathname, router, handlePageExit]); // Keep handlePageExit in dependency array
 
   const handleNavItemHover = useCallback((isHovered: boolean) => {
     setIsNavItemHovered(isHovered);
@@ -98,29 +147,24 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
 
   const morphingTextColor = `color-mix(in srgb, var(--morphing-text-color) ${100 - (scrollProgress * 100)}%, var(--letter-muted-color) ${scrollProgress * 100}%)`;
 
-  // Determine background class based on the current route
   const backgroundClass = pathname === '/' ? 'gradient-background' : 'fixed-background';
+
+  // Determine transition class based on state
+  const transitionClasses = [
+    'transition-fade', // Base class with opacity 0, transition none
+    hasMounted ? 'transition-fade-mounted' : '', // Add transition after mount
+    hasMounted && isEntering ? 'transition-fade-entering' : '' // Add opacity 1 + ease-in when entering
+  ].filter(Boolean).join(' '); // Filter out empty strings and join
 
   return (
     <div className={backgroundClass}>
-      {/* Mouse effect overlay needs to be at the top level
-      <MouseEffect isNavItemHovered={isNavItemHovered} scrollProgress={scrollProgress} /> */}
-      
-      {/* Hero section with morphing text */}
       <div 
         className="fixed left-0 w-full"
         style={{
           filter: `blur(${scrollProgress * 15}px)`,
         }}
       >
-        {/* Create a stack with proper blend context */}
         <div className="relative w-full h-full">
-          {/* Scene container - moved to be under the text
-          <div className="absolute inset-0" style={{ zIndex: 1 }}>
-            <SceneWrapper/>         
-          </div> */}
-
-          {/* Text morphing container positioned over the scene */}
           <div className="absolute inset-0" style={{ zIndex: 2, mixBlendMode: 'multiply'}}>
             <TextMorphEffect  
               texts={[
@@ -139,7 +183,6 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
         </div>
       </div>
 
-      {/* Navbar */}
       <div ref={navbarRef} className="fixed top-0 w-full z-30">
         <Navbar 
           onAboutClick={() => scrollToSection('about')}
@@ -148,13 +191,15 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
         />
       </div>
 
-      {/* Content */}
-      <div className="relative content-text latin-font">
-        {/* Main content */}
-        <div className="relative z-10 bg-transparent p-8">
-          {children}
+      <TransitionContext.Provider value={{ handlePageExit }}>
+        <div 
+          className={`relative content-text latin-font ${transitionClasses}`}
+        >
+          <div className="relative z-10 bg-transparent p-8">
+            {children}
+          </div>
         </div>
-      </div>
+      </TransitionContext.Provider>
     </div>
   );
 } 

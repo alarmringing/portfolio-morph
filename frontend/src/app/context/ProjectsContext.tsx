@@ -17,8 +17,6 @@ export enum FilterType {
 interface ProjectsContextType {
   projects: ProjectData[];
   isLoading: boolean;
-  hasMore: boolean;
-  loadMore: () => Promise<void>;
   error: string | null;
   activeFilter: FilterType;
   setActiveFilter: (filter: FilterType) => void;
@@ -27,8 +25,6 @@ interface ProjectsContextType {
 const ProjectsContext = createContext<ProjectsContextType>({
   projects: [],
   isLoading: true,
-  hasMore: true,
-  loadMore: async () => {},
   error: null,
   activeFilter: FilterType.All,
   setActiveFilter: () => {}
@@ -36,38 +32,49 @@ const ProjectsContext = createContext<ProjectsContextType>({
 
 export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<ProjectData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterType>(FilterType.All);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const loadAllProjects = useCallback(async () => {
+    setIsLoading(true);
+    setProjects([]);
+    setError(null);
+    let currentPage = 1;
+    let keepFetching = true;
+    const accumulatedProjects: ProjectData[] = [];
 
-  const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore) return;
-
-    try {
-      setIsLoading(true);
-      const { projects: newProjects, pagination } = await getProjectsGrid(page);
-
-      setProjects(prev => [...prev, ...newProjects]);
-      setHasMore(pagination.pageCount > page);
-      setPage(prev => prev + 1);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setIsLoading(false);
+    while (keepFetching) {
+      try {
+        console.log(`Fetching page ${currentPage}...`);
+        const { projects: newProjects, pagination } = await getProjectsGrid(currentPage);
+        accumulatedProjects.push(...newProjects);
+        
+        if (pagination.pageCount > currentPage) {
+          currentPage++;
+        } else {
+          keepFetching = false;
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred while fetching projects');
+        keepFetching = false;
+        setIsLoading(false);
+        return;
+      }
     }
-  }, [page, isLoading, hasMore]);
+    
+    setProjects(accumulatedProjects);
+    setIsLoading(false);
+    console.log(`Finished fetching all projects. Total: ${accumulatedProjects.length}`);
 
-  // Load initial data
-  useEffect(() => {
-    loadMore();
   }, []);
 
+  useEffect(() => {
+    loadAllProjects();
+  }, [loadAllProjects]);
+
   return (
-    <ProjectsContext.Provider value={{ projects, isLoading, hasMore, loadMore, error, activeFilter, setActiveFilter }}>
+    <ProjectsContext.Provider value={{ projects, isLoading, error, activeFilter, setActiveFilter }}>
       {children}
     </ProjectsContext.Provider>
   );

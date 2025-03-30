@@ -97,12 +97,12 @@ export default function IsotopeGrid({
           }
         });
 
-        // Load images and update layout
-        imagesLoaded.default(grid).on('progress', () => {
-          if (isotopeInstance) {
-            isotopeInstance.layout();
-          }
-        });
+        // // Load images and update layout
+        // imagesLoaded.default(grid).on('progress', () => {
+        //   if (isotopeInstance) {
+        //     isotopeInstance.layout();
+        //   }
+        // });
 
         imagesLoaded.default(grid).on('done', () => {
             if (isotopeInstance) {

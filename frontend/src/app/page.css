@@ -16,8 +16,7 @@
 
   --noise-opacity: 0.3;
  
-  --cursor-color:  #000000ff;
-  --morphing-text-color:#000000;
+  --morphing-text-color:#47423eff;
   --moon-color: #e4dfe3ff;
 /*
   --gradient-begin-color: rgb(14, 0, 102);
@@ -137,4 +136,23 @@ button:hover {
   .filterbuttons {
     position: fixed; /* Fallback to fixed for small screens */
   }
+}
+
+/* Transition Classes */
+.transition-fade {
+  /* Base state: invisible, no transition initially */
+  opacity: 0;
+  transition: none;
+}
+
+.transition-fade-mounted {
+   /* Apply transition *only* after mount */
+  /* Default (exit) transition */
+  transition: opacity 0.4s ease-out; 
+}
+
+.transition-fade-entering {
+  /* Entering state: visible, override timing if needed */
+  opacity: 1;
+  transition-timing-function: ease-in; 
 }
