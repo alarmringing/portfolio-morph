@@ -1,0 +1,39 @@
+/* Cursor styles */
+.mouseEffectContainer {
+  position: absolute !important;
+  top: 0!important;
+  left: 0!important;
+  right: 0!important;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}   
+
+/* Shapes container */
+.shapes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+  filter: url("#goo");
+}
+
+/* Individual shapes */
+.shape {
+  will-change: transform;
+  position: absolute;
+  border-radius: 50%;
+  background: var(--cursor-color);
+  width: 26px;
+  height: 26px;
+  transform-origin: center center;
+  mix-blend-mode: difference;
+}
+
+/* Selection styles */
+::selection {
+  color: var(--cursor-color);
+  background: var(--accent-color);
+} 
