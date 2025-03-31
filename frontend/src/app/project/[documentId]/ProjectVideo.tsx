@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import styles from './ProjectPage.module.css';
 
 interface ProjectVideoProps {
@@ -9,15 +9,10 @@ interface ProjectVideoProps {
   title: string;
 }
 
-interface VimeoMetadata {
-  width: number;
-  height: number;
-}
-
 export default function ProjectVideo({ type, url, title }: ProjectVideoProps) {
   const [aspectRatio, setAspectRatio] = useState<string>('16/9'); // default fallback
 
-  const getVideoUrl = () => {
+  const getVideoUrl = useCallback(() => {
     if (type === 'Youtube') {
       // Extract video ID handling both standard and other YouTube URL formats
       const videoId = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?\s]{11})/)?.[1];
@@ -27,15 +22,15 @@ export default function ProjectVideo({ type, url, title }: ProjectVideoProps) {
       const videoId = url.split('/').pop();
       return `https://player.vimeo.com/video/${videoId}`;
     }
-  };
+  }, [type, url]);
 
-  const getVideoId = () => {
+  const getVideoId = useCallback(() => {
     if (type === 'Youtube') {
       return url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?\s]{11})/)?.[1];
     } else {
       return url.split('/').pop();
     }
-  };
+  }, [type, url]);
 
   useEffect(() => {
     const fetchVideoMetadata = async () => {
@@ -62,7 +57,7 @@ export default function ProjectVideo({ type, url, title }: ProjectVideoProps) {
     };
 
     fetchVideoMetadata();
-  }, [type, url]);
+  }, [type, getVideoId]);
 
   return (
     <div 

@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { ProjectData } from '@/strapi/StrapiData';
 // import { getProjectsGrid } from '@/strapi/strapi'; // <-- No longer needed here
 
@@ -36,7 +36,7 @@ interface ProjectsProviderProps {
 // export function ProjectsProvider({ children }: { children: React.ReactNode }) { // <-- Modify signature
 export function ProjectsProvider({ children, initialProjects }: ProjectsProviderProps) { // <-- Use new props type
   // Initialize projects state with the prop
-  const [projects, setProjects] = useState<ProjectData[]>(initialProjects);
+  const [projects] = useState<ProjectData[]>(initialProjects);
   const [activeFilter, setActiveFilter] = useState<FilterType>(FilterType.All);
 
   // Provide the projects state initialized from the prop

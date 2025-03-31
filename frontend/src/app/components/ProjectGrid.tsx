@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import styles from './IsotopeGrid.module.css';
 import { useProjects, FilterType } from '../context/ProjectsContext';
+import { ProjectData } from '@/strapi/StrapiData';
 import { ProjectGridItem } from './ProjectGridItem';
 import IsotopeGrid, { determineExpandPosition, generateRandomLayout } from './IsotopeGrid';
 
@@ -38,7 +39,7 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
   }, [projects]);
 
   // Handle project click based on available content
-  const handleProjectClick = (project: any, element: HTMLElement) => {
+  const handleProjectClick = (project: ProjectData, element: HTMLElement) => {
     // Case 1: If there is a description, navigate to project page
     if (project.Description) {
       onGridClick(project.documentId);
@@ -77,16 +78,17 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
 
    // Observe the last grid item
    useEffect(() => {
-    if (!observerRef.current || projects.length === 0) return;
+    const observer = observerRef.current;
+    if (!observer || projects.length === 0) return;
 
     const lastGridItem = gridRef.current?.lastElementChild as HTMLElement;
     if (lastGridItem) {
-      observerRef.current.observe(lastGridItem);
+      observer.observe(lastGridItem);
     }
 
     return () => {
-      if (lastGridItem && observerRef.current) {
-        observerRef.current.unobserve(lastGridItem);
+      if (lastGridItem && observer) {
+        observer.unobserve(lastGridItem);
       }
     };
   }, [projects]);

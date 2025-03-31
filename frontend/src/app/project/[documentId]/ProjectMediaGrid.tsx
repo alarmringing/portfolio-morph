@@ -1,19 +1,19 @@
 'use client'
 
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { STRAPI_URL } from '@/strapi/strapi';
-import styles from './ProjectPage.module.css';
 import gridStyles from '../../components/IsotopeGrid.module.css';
 import IsotopeGrid, { generateRandomLayout, determineExpandPosition } from '../../components/IsotopeGrid';
-import { ProjectData } from '@/strapi/StrapiData';
+import { ProjectData, MediaData } from '@/strapi/StrapiData';
 
 interface ProjectMediaGridProps {
   project: ProjectData;
-  media: any[];
+  media: MediaData[];
 }
 
 interface MediaGridItemProps {
-  media: any;
+  media: MediaData;
   projectTitle: string;
   isExpanded: boolean;
   expandedPosition: 'left' | 'right' | 'center' | null;
@@ -43,10 +43,13 @@ const MediaGridItem = ({ media, projectTitle, isExpanded, expandedPosition, onCl
     >
       <div className={gridStyles.gridItemInnerContainer}>
         <div className={gridStyles.imageContainer}>
-          <img
+          <Image
             src={`${STRAPI_URL}${media.url}`}
-            alt={media.alternativeText || projectTitle}
-            loading="lazy"
+            alt={media.alternativeText || projectTitle || 'Project media'}
+            width={media.width}
+            height={media.height}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{ objectFit: 'cover' }}
           />
         </div>
         {media.caption && (

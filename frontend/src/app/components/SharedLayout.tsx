@@ -5,13 +5,10 @@ import TextMorphEffect from './TextMorphEffect';
 import Navbar from './Navbar';
 import { GlyphType } from '../utils/textUtils';
 import { clamp } from 'three/src/math/MathUtils.js';
-import SceneWrapper from '../canvas/SceneWrapper';
 import { usePathname, useRouter } from 'next/navigation';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { TRANSITION_DURATION_S } from '../utils/transitions';
 import '../page.css';
 import '../fonts.css';
-import MouseEffect from './MouseEffect';
 
 // Define the context type
 interface TransitionContextType {
@@ -35,13 +32,10 @@ interface SharedLayoutProps {
 }
 
 export default function SharedLayout({ children }: SharedLayoutProps) {
-  const aboutRef = useRef<HTMLDivElement>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
   const navbarRef = useRef<HTMLDivElement>(null);
   const [isPortrait, setIsPortrait] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [pendingScroll, setPendingScroll] = useState<string | null>(null);
-  const [isNavItemHovered, setIsNavItemHovered] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const [isEntering, setIsEntering] = useState(false);
@@ -79,7 +73,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
       }
       const aboutSection = window.innerHeight;
       const scrollPosition = window.scrollY;
-      var progress = Math.min(scrollPosition / aboutSection, 1);
+      let progress = Math.min(scrollPosition / aboutSection, 1);
       progress = clamp(progress, 0, 1.0);
       setScrollProgress(progress);
     };
@@ -143,10 +137,6 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     }
   }, [pathname, router, handlePageExit]); // Keep handlePageExit in dependency array
 
-  const handleNavItemHover = useCallback((isHovered: boolean) => {
-    setIsNavItemHovered(isHovered);
-  }, []);
-
   const morphingTextColor = `color-mix(in srgb, var(--morphing-text-color) ${100 - (scrollProgress * 100)}%, var(--letter-muted-color) ${scrollProgress * 100}%)`;
 
   const backgroundClass = pathname === '/' ? 'gradient-background' : 'fixed-background';
@@ -189,7 +179,6 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
         <Navbar 
           onAboutClick={() => scrollToSection('about')}
           onProjectsClick={() => scrollToSection('projects')}
-          onNavItemHover={handleNavItemHover}
         />
       </div>
 

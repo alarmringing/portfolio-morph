@@ -1,14 +1,13 @@
 'use client'
 
-import { ProjectData } from '@/strapi/StrapiData';
+import { ProjectData, MediaData } from '@/strapi/StrapiData';
 import { STRAPI_URL } from '@/strapi/strapi';
 import { renderNode } from '@/strapi/StrapiRenderNodes';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useTransition } from '../../components/SharedLayout';
 import { splitDescription } from '../../utils/descriptionUtils';
 import styles from './ProjectPage.module.css';
-import gridStyles from '../../components/IsotopeGrid.module.css';
 import ProjectMediaGrid from './ProjectMediaGrid';
 import ProjectVideo from './ProjectVideo';
 
@@ -19,8 +18,6 @@ interface ProjectPageProps {
 export default function ProjectPage({ project }: ProjectPageProps) {
   const router = useRouter();
   const { handlePageExit } = useTransition();
-  const imageUrl = project.Thumbnail ? 
-    `${STRAPI_URL}${project.Thumbnail.url}` : null;
   const [primaryDescription, secondaryDescription] = splitDescription(project.Description);
   
   // Filter media by type
@@ -39,7 +36,7 @@ export default function ProjectPage({ project }: ProjectPageProps) {
   };
 
   // Function to render any media type
-  const renderMedia = (media: any, index?: number, customClasses?: string) => {
+  const renderMedia = (media: MediaData, index?: number, customClasses?: string) => {
     if (!media) return null;
     
     const containerClass = `${styles.mediaContainer} ${customClasses || ''}`;
@@ -47,9 +44,12 @@ export default function ProjectPage({ project }: ProjectPageProps) {
     if (media.mime?.startsWith('image/')) {
       return (
         <div key={index} className={containerClass}>
-          <img
+          <Image
             src={`${STRAPI_URL}${media.url}`}
-            alt={media.alternativeText || project.Title}
+            alt={media.alternativeText || project.Title || 'Project image'}
+            width={media.width}
+            height={media.height}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className={styles.mediaImage}
           />
           {media.caption && <p className={styles.mediaCaption}>{media.caption}</p>}
@@ -86,7 +86,7 @@ export default function ProjectPage({ project }: ProjectPageProps) {
   const renderHero = () => {
     switch (project.HeroType) {
       case 'Thumbnail':
-        return renderMedia(project.Thumbnail, undefined);
+        return project.Thumbnail ? renderMedia(project.Thumbnail, undefined) : null;
       case 'Youtube':
         return project.Youtube ? (
           <ProjectVideo type="Youtube" url={project.Youtube} title={project.Title} />
@@ -96,7 +96,7 @@ export default function ProjectPage({ project }: ProjectPageProps) {
           <ProjectVideo type="Vimeo" url={project.Vimeo} title={project.Title} />
         ) : null;
       case 'HeroMedia':
-        return renderMedia(project.HeroMedia, undefined);
+        return project.HeroMedia ? renderMedia(project.HeroMedia, undefined) : null;
       default:
         return null;
     }

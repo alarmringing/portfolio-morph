@@ -56,7 +56,7 @@ export interface MediaData {
   url: string;
   previewUrl: string | null;
   provider: string;
-  provider_metadata: any | null;
+  provider_metadata: unknown | null;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
@@ -113,5 +113,5 @@ export interface ProjectsResponse {
 
 export interface ProjectResponse {
   data: ProjectData;
-  meta: {};
+  meta: object;
 } 

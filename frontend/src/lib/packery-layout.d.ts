@@ -21,6 +21,7 @@ declare module 'packery-layout' {
     layout(): void;
     reloadItems(): void;
     getItemElements(): HTMLElement[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getItem(element: HTMLElement): any;
     fit(element: HTMLElement, x?: number, y?: number): void;
     stamp(elements: HTMLElement | HTMLElement[]): void;
@@ -31,15 +32,20 @@ declare module 'packery-layout' {
     remove(elements: HTMLElement | HTMLElement[]): void;
     destroy(): void;
     getSize(): { width: number, height: number };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     on(eventName: string, listener: Function): void;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     off(eventName: string, listener: Function): void;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     once(eventName: string, listener: Function): void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     emitEvent(eventName: string, args: any[]): void;
     shiftLayout(): void;
     needsResizeLayout(): boolean;
     bindResize(): void;
     unbindResize(): void;
     sortItemsByPosition(): void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     arrange(options?: any): void;
   }
 

@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react';
+import Image from 'next/image';
 import { STRAPI_URL } from '@/strapi/strapi';
 import styles from './IsotopeGrid.module.css';
 import { FilterType } from '../context/ProjectsContext';
+import { ProjectData } from '@/strapi/StrapiData';
 
 interface ProjectGridItemProps {
-  project: any;
+  project: ProjectData;
   marginBottom: number;
   paddingRight: number;
   showType: boolean;
@@ -24,17 +25,11 @@ export function ProjectGridItem({
   expandedPosition,
   onClick
 }: ProjectGridItemProps) {
-  const [isImageWide, setIsImageWide] = useState<boolean>(false);
-
-  const onLoadImage = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const img = e.target as HTMLImageElement;
-    const aspectRatio = img.width / img.height;
-    setIsImageWide(aspectRatio > 1.0 && project.Type != FilterType.None);
-  }
-  
   const imageUrl = project.Thumbnail 
     ? `${STRAPI_URL}${project.Thumbnail.url}` 
     : null;
+
+  const isLandscape = project.Thumbnail && project.Thumbnail.width > project.Thumbnail.height && project.Type !== FilterType.None;
 
   return (
     <button 
@@ -42,8 +37,7 @@ export function ProjectGridItem({
       className={`
         ${styles.gridItem} 
         ${project.Type?.toLowerCase()} 
-        ${isImageWide ? styles.landscape : styles.portrait}
-        ${project.IsFeatured ? styles.featured : ''}
+        ${isLandscape ? styles.landscape : styles.portrait}
         ${isExpanded ? styles.expanded : ''} 
         ${isExpanded && expandedPosition === 'left' ? styles.expandedLeft : ''}
         ${isExpanded && expandedPosition === 'right' ? styles.expandedRight : ''}
@@ -53,12 +47,14 @@ export function ProjectGridItem({
     >
       <div className={styles.gridItemInnerContainer}>
         <div className={styles.imageContainer}>
-          {project.Thumbnail ? (
-            <img
-              src={imageUrl!}
-              alt={project.Title}
-              loading="lazy"
-              onLoad={onLoadImage}
+          {imageUrl && project.Thumbnail ? (
+            <Image
+              src={imageUrl}
+              alt={project.Title || 'Project thumbnail'}
+              width={project.Thumbnail.width}
+              height={project.Thumbnail.height}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ objectFit: 'cover' }}
             />
           ) : (
             <div>No Image</div>
@@ -68,7 +64,7 @@ export function ProjectGridItem({
           <h3>{project.Title}</h3>
           {showType && (
             <p>{project.Type === FilterType.Rnd ? 'R&D' : project.Type}</p>
-          )} 
+          )}
         </div>
       </div>
     </button>

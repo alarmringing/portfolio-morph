@@ -1,17 +1,25 @@
 'use client'
 
-import { useEffect, useRef, useCallback, ReactNode, RefObject } from 'react';
+import { useEffect, useRef, ReactNode, RefObject } from 'react';
 import styles from './IsotopeGrid.module.css';
 
 interface IsotopeGridProps {
   children: ReactNode;
-  projects: any[];
+  projects: unknown[];
   itemSelector: string;
   filter: string | undefined;
 }
 
+// Define a more specific type for Isotope arrange options
+interface IsotopeArrangeOptions {
+  filter?: string;
+  sortBy?: string | string[];
+  sortAscending?: boolean;
+  // Add other potential options if known
+}
+
 export interface IsotopeRefType {
-  arrange: (options: any) => void;
+  arrange: (options: IsotopeArrangeOptions) => void;
   layout: () => void;
   destroy: () => void;
 }
@@ -97,13 +105,6 @@ export default function IsotopeGrid({
           }
         });
 
-        // // Load images and update layout
-        // imagesLoaded.default(grid).on('progress', () => {
-        //   if (isotopeInstance) {
-        //     isotopeInstance.layout();
-        //   }
-        // });
-
         imagesLoaded.default(grid).on('done', () => {
             if (isotopeInstance) {
               isotopeInstance.layout();
@@ -132,12 +133,6 @@ export default function IsotopeGrid({
     isotope.current.arrange({ filter });
   }, [filter]);
 
-  // Layout method available to parent components
-  const relayout = useCallback(() => {
-    if (isotope.current) {
-      isotope.current.layout();
-    }
-  }, []);
 
   return (
     <div className={styles.grid} ref={gridRef}>

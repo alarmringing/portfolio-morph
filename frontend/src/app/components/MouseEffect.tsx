@@ -22,10 +22,10 @@ interface Dot {
   lockY?: number;
 }
 
-export default function MouseEffect({ children, scrollProgress, isNavItemHovered = false }: MouseEffectProps) {
+export default function MouseEffect({ scrollProgress, isNavItemHovered = false }: MouseEffectProps) {
   const shapesRef = useRef<HTMLDivElement>(null);
   const [dots, setDots] = useState<Dot[]>([]);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const mousePositionRef = useRef({ x: 0, y: 0 });
   const [isIdle, setIsIdle] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastFrameRef = useRef(0);
@@ -64,19 +64,14 @@ export default function MouseEffect({ children, scrollProgress, isNavItemHovered
   useEffect(() => {
     if (dots.length > 0) {
       const handleMouseMove = (e: MouseEvent) => {
-        setMousePosition({
-          x: e.clientX,
-          y: e.clientY
-        });
+        mousePositionRef.current = { x: e.clientX, y: e.clientY };
         resetIdleTimer(e.clientX, e.clientY);
       };
 
-      // Add event listener for mouse movement
       window.addEventListener('mousemove', handleMouseMove);
       lastFrameRef.current = Date.now();
 
       return () => {
-        // Cleanup event listener and animations on component unmount
         window.removeEventListener('mousemove', handleMouseMove);
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
@@ -87,6 +82,7 @@ export default function MouseEffect({ children, scrollProgress, isNavItemHovered
         dots.forEach(dot => dot.element.remove());
       };
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dots]);
 
   // Handle hover and scroll effects
@@ -120,8 +116,8 @@ export default function MouseEffect({ children, scrollProgress, isNavItemHovered
 
   useEffect(() => {
     const animate = () => {
-      let x = mousePosition.x;
-      let y = mousePosition.y;
+      let x = mousePositionRef.current.x;
+      let y = mousePositionRef.current.y;
 
       dots.forEach((dot, index) => {
         const nextDot = dots[index + 1] || dots[0];
@@ -149,12 +145,11 @@ export default function MouseEffect({ children, scrollProgress, isNavItemHovered
 
     animationFrameRef.current = requestAnimationFrame(animate);
     return () => {
-      // Cleanup animation frame on component unmount
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [dots, mousePosition, isIdle]);
+  }, [dots, isIdle, sineDots]);
 
   return (
     <>

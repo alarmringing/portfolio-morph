@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AboutData } from '@/strapi/StrapiData'
 import { renderNode } from '@/strapi/StrapiRenderNodes'
 import { FilterType } from './context/ProjectsContext';

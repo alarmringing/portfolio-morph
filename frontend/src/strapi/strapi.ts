@@ -39,10 +39,12 @@ export const getProjectsPage = async (documentId : string) => {
   return response.data.data;
 };
 
-export default {
+const strapiApi = {
   getAbout,
   getProjectsGrid,
   getProjectsPage,
   API_URL,
   STRAPI_URL
 };
+
+export default strapiApi;

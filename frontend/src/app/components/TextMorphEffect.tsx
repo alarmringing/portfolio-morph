@@ -1,8 +1,8 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import styles from './TextMorphEffect.module.css'
-import { isCJKText, classifyGlyph, GlyphType, isCJKGlyph } from '../utils/textUtils';
+import { GlyphType, isCJKGlyph } from '../utils/textUtils';
 import { useMouseReactiveStyles } from '../hooks/useMouseReactiveStyles';
 
 // Define a custom type for our style object that includes textOrientation
@@ -65,7 +65,7 @@ export default function TextMorphEffect({
     let animationId: number | null = null;
 
     function verticalTextStyle(glyphType: GlyphType): TextStyleProps {
-      var style: TextStyleProps = { writingMode: 'horizontal-tb', letterSpacing: '0px', top: '0'};
+      let style: TextStyleProps = { writingMode: 'horizontal-tb', letterSpacing: '0px', top: '0'};
       if (isPortrait) {
         style = {...style, writingMode: 'vertical-rl' };
         if (glyphType === GlyphType.L) {
@@ -159,8 +159,8 @@ export default function TextMorphEffect({
         return;
       }
       
-      let newTime = new Date();
-      let dt = (newTime.getTime() - animationState.current.time.getTime()) / 1000;
+      const newTime = new Date();
+      const dt = (newTime.getTime() - animationState.current.time.getTime()) / 1000;
       animationState.current.time = newTime;
       
       animationState.current.cooldown -= dt;
@@ -186,7 +186,7 @@ export default function TextMorphEffect({
     return () => {
       if (animationId) cancelAnimationFrame(animationId);
     };
-  }, [normalizedTexts, morphTime, cooldownTime, isPortrait, defaultFont]);
+  }, [normalizedTexts, morphTime, cooldownTime, isPortrait, defaultFont, width]);
 
   // Use the custom hook for mouse reactivity
   useMouseReactiveStyles(containerRef);
