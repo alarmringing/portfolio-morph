@@ -1,6 +1,20 @@
 @import "tailwindcss";
 
+/* Global Styles */
+
+/* Add the :root variables from the module files here */
 :root {
+  /* From TextMorphEffect.module.css */
+  --mono: "MONO" 0.34;
+  --casl: "CASL" 0.88;
+  --wght: "wght" 1000;
+  --slnt: "slnt" 0;
+  --CRSV: "CRSV" 0.5;
+
+  /* From ProjectPage.module.css */
+  --max-width: 64rem;
+  --gap: 2rem;
+
   --morphing-text-color:#e4dfe3ff;
   --morphing-text-color-shadow: rgb(14, 0, 102);
   --accent-color: #eaffa3;

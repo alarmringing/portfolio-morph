@@ -1,8 +1,10 @@
 /* Common variables */
+/* <-- Remove this :root block
 :root {
   --max-width: 64rem;
   --gap: 2rem;
 }
+*/
 
 /* Main container */
 .container {

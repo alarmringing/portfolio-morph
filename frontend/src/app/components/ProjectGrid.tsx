@@ -12,7 +12,7 @@ interface ProjectGridProps {
 
 export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
-  const { projects, isLoading, hasMore, loadMore, activeFilter } = useProjects();
+  const { projects, activeFilter } = useProjects();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [expandedItemPosition, setExpandedItemPosition] = useState<'left' | 'right' | 'center' | null>(null);
@@ -75,30 +75,6 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
     }
   };
 
-   // Setup Intersection Observer for infinite scroll
-   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const loadMoreItems = (entries: IntersectionObserverEntry[]) => {
-      const target = entries[0];
-      if (target.isIntersecting && hasMore && !isLoading) {
-        loadMore();
-      }
-    };
-
-    observerRef.current = new IntersectionObserver(loadMoreItems, {
-      root: null,
-      rootMargin: '200px', // Start loading before reaching the end
-      threshold: 0.1
-    });
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loadMore, hasMore, isLoading]);
-
    // Observe the last grid item
    useEffect(() => {
     if (!observerRef.current || projects.length === 0) return;
@@ -140,9 +116,7 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
           projects={projects}
           itemSelector={`.${styles.gridItem}`}
           filter={filterValue}
-        >
-          {isLoading && <div style={{textAlign: 'center'}}>Loading projects...</div>}
-          
+        >          
           {projects.map((project) => (
             <ProjectGridItem
               key={project.documentId}

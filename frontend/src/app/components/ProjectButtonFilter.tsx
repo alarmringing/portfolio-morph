@@ -1,5 +1,5 @@
 import { useProjects } from '../context/ProjectsContext';
-import { FilterType } from './ProjectGrid';
+import { FilterType } from '../context/ProjectsContext';
 
 interface ProjectFilterButtonProps {
   filter: FilterType;

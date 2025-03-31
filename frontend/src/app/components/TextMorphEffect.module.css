@@ -1,11 +1,3 @@
-:root {
-  --mono: "MONO" 0.34;
-  --casl: "CASL" 0.88;
-  --wght: "wght" 1000;
-  --slnt: "slnt" 0;
-  --CRSV: "CRSV" 0.5;
-  }
-
 .container {
   filter: url(#threshold) blur(0.6px);
   position: relative;
