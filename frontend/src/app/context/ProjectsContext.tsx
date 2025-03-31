@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { ProjectData } from '@/strapi/StrapiData';
-import { getProjectsGrid } from '@/strapi/strapi';
+// import { getProjectsGrid } from '@/strapi/strapi'; // <-- No longer needed here
 
 export enum FilterType {
   All = 'All',
@@ -13,68 +13,35 @@ export enum FilterType {
   None = 'None'
 }
 
-
 interface ProjectsContextType {
   projects: ProjectData[];
-  isLoading: boolean;
-  error: string | null;
+  // isLoading: boolean; // <-- Remove isLoading
+  // error: string | null; // <-- Remove error
   activeFilter: FilterType;
   setActiveFilter: (filter: FilterType) => void;
 }
 
 const ProjectsContext = createContext<ProjectsContextType>({
   projects: [],
-  isLoading: true,
-  error: null,
   activeFilter: FilterType.All,
   setActiveFilter: () => {}
 });
 
-export function ProjectsProvider({ children }: { children: React.ReactNode }) {
-  const [projects, setProjects] = useState<ProjectData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+// Define props for the provider, including initialProjects
+interface ProjectsProviderProps {
+  children: React.ReactNode;
+  initialProjects: ProjectData[];
+}
+
+// export function ProjectsProvider({ children }: { children: React.ReactNode }) { // <-- Modify signature
+export function ProjectsProvider({ children, initialProjects }: ProjectsProviderProps) { // <-- Use new props type
+  // Initialize projects state with the prop
+  const [projects, setProjects] = useState<ProjectData[]>(initialProjects);
   const [activeFilter, setActiveFilter] = useState<FilterType>(FilterType.All);
-  const [error, setError] = useState<string | null>(null);
 
-  const loadAllProjects = useCallback(async () => {
-    setIsLoading(true);
-    setProjects([]);
-    setError(null);
-    let currentPage = 1;
-    let keepFetching = true;
-    const accumulatedProjects: ProjectData[] = [];
-
-    while (keepFetching) {
-      try {
-        console.log(`Fetching page ${currentPage}...`);
-        const { projects: newProjects, pagination } = await getProjectsGrid(currentPage);
-        accumulatedProjects.push(...newProjects);
-        
-        if (pagination.pageCount > currentPage) {
-          currentPage++;
-        } else {
-          keepFetching = false;
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred while fetching projects');
-        keepFetching = false;
-        setIsLoading(false);
-        return;
-      }
-    }
-    
-    setProjects(accumulatedProjects);
-    setIsLoading(false);
-    console.log(`Finished fetching all projects. Total: ${accumulatedProjects.length}`);
-
-  }, []);
-
-  useEffect(() => {
-    loadAllProjects();
-  }, [loadAllProjects]);
-
+  // Provide the projects state initialized from the prop
   return (
-    <ProjectsContext.Provider value={{ projects, isLoading, error, activeFilter, setActiveFilter }}>
+    <ProjectsContext.Provider value={{ projects, activeFilter, setActiveFilter }}>
       {children}
     </ProjectsContext.Provider>
   );

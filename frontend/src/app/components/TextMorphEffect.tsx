@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef, useEffect, useState } from 'react'
 import styles from './TextMorphEffect.module.css'
 import { isCJKText, classifyGlyph, GlyphType, isCJKGlyph } from '../utils/textUtils';

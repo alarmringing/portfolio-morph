@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef, useEffect, useState, useCallback, createContext, useContext } from 'react';
 import TextMorphEffect from './TextMorphEffect';
 import Navbar from './Navbar';
