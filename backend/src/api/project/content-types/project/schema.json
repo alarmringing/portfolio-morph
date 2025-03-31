@@ -45,7 +45,8 @@
         "Interactive",
         "Static",
         "Rnd",
-        "Music"
+        "Music",
+        "None"
       ]
     },
     "Show": {
@@ -73,7 +74,6 @@
         "Thumbnail",
         "Youtube",
         "Vimeo",
-        "Audio",
         "HeroMedia",
         "None"
       ]
@@ -94,6 +94,9 @@
     },
     "Iframe": {
       "type": "string"
+    },
+    "IsFeatured": {
+      "type": "boolean"
     }
   }
 }

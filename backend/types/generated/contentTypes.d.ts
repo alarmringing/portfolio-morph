@@ -415,9 +415,10 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     Github: Schema.Attribute.String;
     HeroMedia: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     HeroType: Schema.Attribute.Enumeration<
-      ['Thumbnail', 'Youtube', 'Vimeo', 'Audio', 'HeroMedia', 'None']
+      ['Thumbnail', 'Youtube', 'Vimeo', 'HeroMedia', 'None']
     >;
     Iframe: Schema.Attribute.String;
+    IsFeatured: Schema.Attribute.Boolean;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -434,7 +435,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     Thumbnail: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     Title: Schema.Attribute.String;
     Type: Schema.Attribute.Enumeration<
-      ['Interactive', 'Static', 'Rnd', 'Music']
+      ['Interactive', 'Static', 'Rnd', 'Music', 'None']
     >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
