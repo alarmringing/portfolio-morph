@@ -24,3 +24,5 @@ services:
         generateValue: true
       - key: APP_KEYS
         generateValue: true
+      - key: NPM_CONFIG_IGNORE_SCRIPTS
+        value: false
