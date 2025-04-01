@@ -2,6 +2,7 @@ import { getProjectsGrid, getProjectsPage } from '@/strapi/strapi'
 import { ProjectData } from '@/strapi/StrapiData'
 import ProjectClientPage from './ProjectClientPage'
 
+type Params = Promise<{ documentId: string }>
 
 // This generates all project pages at build time
 export async function generateStaticParams() {
@@ -13,10 +14,10 @@ export async function generateStaticParams() {
 }
 
 // Server component that fetches data
-export default async function ProjectPage({ params }: { params: { documentId : string } }) {
-  const { documentId  } = await params;
+export default async function ProjectPage(props: { params: Params }) {
+  const params = await props.params;
+  const { documentId } = params;
   const project = await getProjectsPage(documentId) as ProjectData;
-
 
   if (!project) {
     return <div>Project not found</div>;
