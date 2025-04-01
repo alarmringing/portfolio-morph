@@ -19,7 +19,6 @@
     "@strapi/plugin-users-permissions": "5.11.0",
     "@strapi/strapi": "5.11.0",
     "better-sqlite3": "11.3.0",
-    "styled-components": "^6.0.0"
   },
   "devDependencies": {},
   "engines": {
