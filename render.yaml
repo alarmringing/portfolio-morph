@@ -2,6 +2,7 @@ services:
   - type: web
     name: strapi
     env: node
+    branch: backend-deploy 
     plan: starter
     buildCommand: cd backend && npm install && npm run build
     startCommand: cd backend && rsync -a public/ /data/public/ && npm run start
