@@ -5,7 +5,7 @@ services:
     branch: backend-deploy 
     plan: starter
     buildCommand: cd backend && npm install && npm run build
-    startCommand: cd backend && rsync -a public/ /data/public/ && npm run start && rm -rf ~/project/src/backend/public/uploads && ln -s /data/public/uploads ~/project/src/backend/public/uploads
+    startCommand: cd backend && npm run start && ln -s /data/public/uploads ~/project/src/backend/public/uploads
     healthCheckPath: /_health
     autoDeploy: false
     disk:
