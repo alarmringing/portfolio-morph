@@ -6,6 +6,10 @@
   justify-content: center;
   align-items: center;
   margin: 0 auto;
+  pointer-events: none;
+/* 
+  will-change: filter, opacity;
+  transform: translateZ(0); */
 
   text-align: center;
   height: auto;
@@ -19,7 +23,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: none;
   white-space: nowrap;
+
+  /* will-change: filter, opacity;
+  transform: translateZ(0); */
 
   text-shadow:  var(--morphing-text-color-shadow) var(--text-shadow-offset-x, 2px) var(--text-shadow-offset-y, 3px) var(--text-shadow-blur-radius, 0px);
   font-variation-settings: var(--mono), var(--casl), var(--wght), var(--slnt), var(--CRSV);

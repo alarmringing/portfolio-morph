@@ -1,9 +1,10 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import styles from './TextMorphEffect.module.css'
 import { GlyphType, isCJKGlyph } from '../utils/textUtils';
 import { useMouseReactiveStyles } from '../hooks/useMouseReactiveStyles';
+import { IS_SAFARI } from '../utils/browserUtils';
 
 // Define a custom type for our style object that includes textOrientation
 interface TextStyleProps {
@@ -28,7 +29,6 @@ interface TextMorphEffectProps {
   width?: number;
   defaultFont?: string;
   isPortrait?: boolean;
-  threshold?: number;
   textColor?: string;
 }
 
@@ -41,7 +41,6 @@ export default function TextMorphEffect({
   textColor = 'var(--accent-color)',
   defaultFont = 'NotoSerifCJK, serif',
   isPortrait = false,
-  threshold = -140,
 }: TextMorphEffectProps) {
   const text0Ref = useRef<HTMLSpanElement>(null);
   const text1Ref = useRef<HTMLSpanElement>(null);
@@ -74,7 +73,13 @@ export default function TextMorphEffect({
           style = {...style, textOrientation: 'upright'};
         }
         if (glyphType === GlyphType.K) {
-          style = {...style, letterSpacing: '-0.4em', top: '-0.2em'};
+          // korean vertical letter spacing should only be applied on non- safari browsers
+          // Check isClient to prevent hydration mismatch
+          const reduceVerticalSpacing =  IS_SAFARI ? { letterSpacing: '0px', top: '0px' } : { letterSpacing: '-0.4em', top: '-0.2em' };
+          style = {
+            ...style, 
+            ...reduceVerticalSpacing
+          };
         }
       }
       return style;
@@ -129,24 +134,24 @@ export default function TextMorphEffect({
 
     function setMorph(progress: number) {
       if (!text0Ref.current || !text1Ref.current) return;
-    
+
       text1Ref.current.style.filter = `blur(${Math.min(8 / progress - 8, 100)}px)`;
-      text1Ref.current.style.opacity = `${Math.pow(progress, 0.4) * 100}%`;
-      
+      text1Ref.current.style.opacity = `${Math.pow(progress, 0.4)}`;
+
       progress = 1 - progress;
       text0Ref.current.style.filter = `blur(${Math.min(8 / progress - 8, 100)}px)`;
-      text0Ref.current.style.opacity = `${Math.pow(progress, 0.4) * 100}%`;
+      text0Ref.current.style.opacity = `${Math.pow(progress, 0.4)}`;
     }
 
     function doCooldown() {
       if (!text0Ref.current || !text1Ref.current) return;
-      
+
       animationState.current.morph = 0;
 
       text0Ref.current.style.filter = "";
-      text0Ref.current.style.opacity = "100%";
+      text0Ref.current.style.opacity = "1";
       text1Ref.current.style.filter = "";
-      text1Ref.current.style.opacity = "0%";
+      text1Ref.current.style.opacity = "0";
 
       const currentText = normalizedTexts[animationState.current.textIndex % normalizedTexts.length];
       const nextText = normalizedTexts[(animationState.current.textIndex + 1) % normalizedTexts.length];
@@ -191,24 +196,25 @@ export default function TextMorphEffect({
   // Use the custom hook for mouse reactivity
   useMouseReactiveStyles(containerRef);
     
-  // Create a style object for the container with dynamic sizing
-  const containerStyle = isPortrait
+  // Create a style object for the container with dynamic sizing AND hardware acceleration
+  const fontSizeStyle = isPortrait
     ? { fontSize: `${width / 3}vh` } // In portrait, use height percentage
     : { fontSize: `${width / 2}vw` };  // In landscape, use width percentage
+
+  const containerStyle = {
+    ...fontSizeStyle,
+    // Consider adding will-change: filter; if transform alone isn't enough
+  };
     
   return (
     <div>
       <svg style={{ position: 'absolute', width: 0, height: 0 }}>
         <defs>
           <filter id="threshold">
-            <feColorMatrix
-              in="SourceGraphic"
-              type="matrix"
-              values={`1 0 0 0 0
-                     0 1 0 0 0
-                     0 0 1 0 0
-                     0 0 0 255 ${threshold}`}
-            />
+            <feComponentTransfer>
+              <feFuncA type="discrete" tableValues="0 1"/> 
+              {/* Values below ~0.5 alpha become 0, above become 1 */}
+            </feComponentTransfer>
           </filter>
         </defs>
       </svg>

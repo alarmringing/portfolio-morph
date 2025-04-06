@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { TRANSITION_DURATION_S } from '../utils/transitions';
 import '../page.css';
 import '../fonts.css';
+import { IS_SAFARI } from '../utils/browserUtils';
 
 // Define the context type
 interface TransitionContextType {
@@ -42,8 +43,12 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const previousPathname = useRef(pathname);
 
+  // State to track client-side mounting for hydration fix
+  const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
     setHasMounted(true);
+    setIsClient(true); // Set isClient to true after initial mount
   }, []);
 
   useEffect(() => {
@@ -148,16 +153,19 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     hasMounted && isEntering ? 'transition-fade-entering' : '' // Add opacity 1 + ease-in when entering
   ].filter(Boolean).join(' '); // Filter out empty strings and join
 
+  // Apply blur only on client-side Safari to prevent hydration mismatch
+  const blurClass = { 
+    filter: `blur(${scrollProgress * 15}px)`
+  };
+
   return (
     <div className={backgroundClass}>
       <div 
         className="fixed left-0 w-full"
-        style={{
-          filter: `blur(${scrollProgress * 15}px)`,
-        }}
+        style={blurClass}
       >
         <div className="relative w-full h-full">
-          <div className="absolute inset-0" style={{ zIndex: 2, mixBlendMode: 'multiply'}}>
+          <div className="absolute inset-0" style={{ zIndex: 2}}>
             <TextMorphEffect  
               texts={[
                 { text: 'Jihee', font: 'BagelFatOne, monospace', glyphType: GlyphType.L },
@@ -169,7 +177,6 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
               defaultFont='NotoSerifCJK, serif'
               isPortrait={isPortrait}
               textColor={morphingTextColor}
-              threshold={-140}
             />
           </div>
         </div>

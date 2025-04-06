@@ -12,10 +12,10 @@
   padding-left: 0rem;
 }
 
-.gridItem img {
+/* .gridItem img {
   max-width: max-content;
   max-height: max-content;
-}
+} */
 
 .gridItem.landscape {
   max-width: 350px;

@@ -28,14 +28,10 @@
   --gradient-middle-color: rgb(14, 0, 102);
   --gradient-end-color: rgb(0, 44, 37);
 
-  --noise-opacity: 0.3;
+  --noise-opacity: 0.1;
  
   --morphing-text-color:#47423eff;
   --moon-color: #e4dfe3ff;
-/*
-  --gradient-begin-color: rgb(14, 0, 102);
-  --primary-color: #e4dfe3ff;
- --accent-color: rgb(189, 0, 0); */
 }
 
 
@@ -46,6 +42,7 @@ html, body {
   height: 100%;
   overflow-anchor: none;
   background: var(--gradient-end-color);
+  overscroll-behavior-y: none; 
 }
 
 strong { 
@@ -72,11 +69,12 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  mix-blend-mode: hard-light;
+  mix-blend-mode: screen;
   background-image: url('/noise.svg');
   background-repeat: repeat;
-  background-size: 200px 200px;
+  background-size: 8rem 8rem;
   opacity: var(--noise-opacity);
+  transform:translate3d(0,0,0);
   pointer-events: none;
   z-index: 1;
 }
