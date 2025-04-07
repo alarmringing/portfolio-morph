@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import styles from './TextMorphEffect.module.css'
 import { GlyphType, isCJKGlyph } from '../utils/textUtils';
 import { useMouseReactiveStyles } from '../hooks/useMouseReactiveStyles';

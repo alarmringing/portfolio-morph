@@ -9,7 +9,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { TRANSITION_DURATION_S } from '../utils/transitions';
 import '../page.css';
 import '../fonts.css';
-import { IS_SAFARI } from '../utils/browserUtils';
 
 // Define the context type
 interface TransitionContextType {
@@ -43,12 +42,8 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const previousPathname = useRef(pathname);
 
-  // State to track client-side mounting for hydration fix
-  const [isClient, setIsClient] = useState(false);
-
   useEffect(() => {
     setHasMounted(true);
-    setIsClient(true); // Set isClient to true after initial mount
   }, []);
 
   useEffect(() => {
