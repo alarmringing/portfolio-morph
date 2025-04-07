@@ -1,9 +1,41 @@
 // Remove 'use client' if it exists - Layout should be a Server Component for data fetching
-
+import type { Metadata } from 'next'
 import { ProjectsProvider } from './context/ProjectsContext'
 import SharedLayout from './components/SharedLayout'
+import { Analytics } from '@vercel/analytics/next';
 import { getProjectsGrid } from '@/strapi/strapi' // <-- Import fetching function
 import { ProjectData } from '@/strapi/StrapiData' // <-- Import data type
+
+const productionUrl = 'https://jiheehwang.com';
+
+export const metadata: Metadata = {
+  // This sets the <title> tag
+  title: 'Jihee.지희.ジヒ.智熙',
+
+  // This sets the <meta name="description"> tag (important for SEO)
+  description: 'Jihee\'s morphy loopy squishy home sweet home of projects AKA portfolio.',
+
+  // Crucial for making sure image paths work correctly in production
+  metadataBase: new URL(productionUrl),
+
+  // --- Open Graph Metadata (Facebook, LinkedIn, etc.) ---
+  openGraph: {
+    title: 'Jihee.지희.ジヒ.智熙', 
+    description: 'Jihee\'s morphy loopy squishy home sweet home of projects AKA portfolio.',
+    url: productionUrl,
+    siteName: 'Your Site Name', 
+    images: [
+      {
+        url: '/thumbnail.jpg',
+        width: 1200,        
+        height: 630,       
+        alt: 'Screenshot of page', 
+      },
+    ],
+    locale: 'en_US', 
+    type: 'website',
+  },
+}
 
 // Helper function to fetch all projects (similar to loadAllProjects)
 async function fetchAllProjects(): Promise<ProjectData[]> {
@@ -51,6 +83,7 @@ export default async function RootLayout({ // <-- Make the function async
             {children}
           </SharedLayout>
         </ProjectsProvider>
+        <Analytics />
       </body>
     </html>
   )
