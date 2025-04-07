@@ -35,8 +35,8 @@ interface ProjectsProviderProps {
 
 // export function ProjectsProvider({ children }: { children: React.ReactNode }) { // <-- Modify signature
 export function ProjectsProvider({ children, initialProjects }: ProjectsProviderProps) { // <-- Use new props type
-  // Initialize projects state with the prop
-  const [projects] = useState<ProjectData[]>(initialProjects);
+  // Initialize projects state with the prop. Filter out projects with Show set to false.
+  const [projects] = useState<ProjectData[]>(initialProjects.filter(project => project.Show));
   const [activeFilter, setActiveFilter] = useState<FilterType>(FilterType.All);
 
   // Provide the projects state initialized from the prop

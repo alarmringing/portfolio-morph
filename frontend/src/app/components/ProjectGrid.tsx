@@ -40,8 +40,8 @@ export default function ProjectGrid({ onGridClick }: ProjectGridProps) {
 
   // Handle project click based on available content
   const handleProjectClick = (project: ProjectData, element: HTMLElement) => {
-    // Case 1: If there is a description, navigate to project page
-    if (project.Description) {
+    // Case 1: If there is a description and is not type none, navigate to project page
+    if (project.Description && project.Type !== FilterType.None) {
       onGridClick(project.documentId);
       return;
     }
