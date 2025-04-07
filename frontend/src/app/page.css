@@ -15,7 +15,7 @@
   --max-width: 64rem;
   --gap: 2rem;
 
-  --morphing-text-color:#47423eff;
+  --morphing-text-color:rgb(0, 0, 0);
   --morphing-text-color-shadow: rgb(14, 0, 102);
   --accent-color: #eaffa3;
   --letter-muted-color: #2d3834;
