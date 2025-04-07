@@ -35,8 +35,19 @@ interface ProjectsProviderProps {
 
 // export function ProjectsProvider({ children }: { children: React.ReactNode }) { // <-- Modify signature
 export function ProjectsProvider({ children, initialProjects }: ProjectsProviderProps) { // <-- Use new props type
-  // Initialize projects state with the prop. Filter out projects with Show set to false.
-  const [projects] = useState<ProjectData[]>(initialProjects.filter(project => project.Show));
+  // Sort initial projects: Filter by Show, then put Hero projects first
+  const [projects] = useState<ProjectData[]>(() =>
+    initialProjects
+      .filter(project => project.Show)
+      .sort((a, b) => {
+        // If b is featured and a is not, b comes first
+        if (b.IsFeatured && !a.IsFeatured) return 1;
+        // If a is featured and b is not, a comes first
+        if (a.IsFeatured && !b.IsFeatured) return -1;
+        // Otherwise, maintain relative order
+        return 0;
+      })
+  );
   const [activeFilter, setActiveFilter] = useState<FilterType>(FilterType.All);
 
   // Provide the projects state initialized from the prop

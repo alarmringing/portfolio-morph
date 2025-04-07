@@ -81,6 +81,7 @@ export interface ProjectData {
   documentId: string;
   Title: string;
   Show: boolean;
+  IsFeatured?: boolean;
   Description: ParagraphNode[] | null;
   createdAt: string;
   updatedAt: string;
