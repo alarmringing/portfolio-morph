@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { TRANSITION_DURATION_S } from '../utils/transitions';
 import '../page.css';
 import '../fonts.css';
+import { IS_SAFARI } from '../utils/browserUtils';
 
 // Define the context type
 interface TransitionContextType {
@@ -41,9 +42,14 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   const [isEntering, setIsEntering] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const previousPathname = useRef(pathname);
+  const [textMorphScale, setTextMorphScale] = useState(1.5); // Default scale
 
   useEffect(() => {
     setHasMounted(true);
+    // Check for Safari only after mounting on the client
+    if (IS_SAFARI) {
+      setTextMorphScale(3.5);
+    }
   }, []);
 
   useEffect(() => {
@@ -148,19 +154,13 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     hasMounted && isEntering ? 'transition-fade-entering' : '' // Add opacity 1 + ease-in when entering
   ].filter(Boolean).join(' '); // Filter out empty strings and join
 
-  // Apply blur only on client-side Safari to prevent hydration mismatch
-  const blurClass = { 
-    filter: `blur(${scrollProgress * 15}px)`
-  };
-
   return (
     <div className={backgroundClass}>
       <div 
         className="fixed left-0 w-full"
-        style={blurClass}
       >
         <div className="relative w-full h-full">
-          <div className="absolute inset-0" style={{ zIndex: 2}}>
+          <div style={{ zIndex: 2}}>
             <TextMorphEffect  
               texts={[
                 { text: 'Jihee', font: 'BagelFatOne, monospace', glyphType: GlyphType.L },
@@ -168,7 +168,9 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
                 { text: 'ジヒ', font: 'PottaOne, serif', glyphType: GlyphType.J },
                 { text: '智熙', font: 'PottaOne, serif', glyphType: GlyphType.C }
               ]} 
-              width={70}
+              blurAmount={scrollProgress * 15}
+              width={80}
+              scale={textMorphScale}
               defaultFont='NotoSerifCJK, serif'
               isPortrait={isPortrait}
               textColor={morphingTextColor}

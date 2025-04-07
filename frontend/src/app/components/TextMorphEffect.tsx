@@ -28,7 +28,9 @@ interface TextMorphEffectProps {
   cooldownTime?: number;
   width?: number;
   defaultFont?: string;
+  scale?: number;
   isPortrait?: boolean;
+  blurAmount?: number;
   textColor?: string;
 }
 
@@ -40,6 +42,8 @@ export default function TextMorphEffect({
   width = 80,
   textColor = 'var(--accent-color)',
   defaultFont = 'NotoSerifCJK, serif',
+  blurAmount = 0,
+  scale = 1,
   isPortrait = false,
 }: TextMorphEffectProps) {
   const text0Ref = useRef<HTMLSpanElement>(null);
@@ -89,8 +93,8 @@ export default function TextMorphEffect({
     const baseFontSize = (isPortrait: boolean, glyphType: GlyphType) => {
       return {
         fontSize: isPortrait
-          ? `${width / 3 * (isCJKGlyph(glyphType) ? 1.3 : 1.1)}vh` // In portrait, use height percentage
-          : `${width / 2.6 * (isCJKGlyph(glyphType) ? 1.3 : 1.1)}vw`  // In landscape, use width percentage
+          ? `${width / 3 * (isCJKGlyph(glyphType) ? 1.3 : 1.1) / scale}vh` // In portrait, use height percentage
+          : `${width / 2.6 * (isCJKGlyph(glyphType) ? 1.3 : 1.1) / scale}vw`  // In landscape, use width percentage
       };
     };
 
@@ -196,18 +200,12 @@ export default function TextMorphEffect({
   // Use the custom hook for mouse reactivity
   useMouseReactiveStyles(containerRef);
     
-  // Create a style object for the container with dynamic sizing AND hardware acceleration
-  const fontSizeStyle = isPortrait
-    ? { fontSize: `${width / 3}vh` } // In portrait, use height percentage
-    : { fontSize: `${width / 2}vw` };  // In landscape, use width percentage
-
   const containerStyle = {
-    ...fontSizeStyle,
-    // Consider adding will-change: filter; if transform alone isn't enough
+    scale: scale,
   };
     
   return (
-    <div>
+    <div style={{ filter: `blur(${blurAmount}px)` }}>
       <svg style={{ position: 'absolute', width: 0, height: 0 }}>
         <defs>
           <filter id="threshold">
