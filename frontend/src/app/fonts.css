@@ -1,6 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,CRSV@1000,1,0&display=swap');
-
-
 @font-face {
   font-family: 'PottaOne';
   src: url('/fonts/PottaOne-subset.ttf') format('truetype');
@@ -12,15 +9,6 @@
 @font-face {
   font-family: 'BagelFatOne';
   src: url('/fonts/BagelFatOne-subset.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-
-@font-face {
-  font-family: 'Syne';
-  src: url('/fonts/SyneMono-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

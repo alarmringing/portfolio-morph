@@ -36,8 +36,6 @@ export function useMouseReactiveStyles(containerRef: RefObject<HTMLDivElement | 
             normalizedDistance = Math.pow(normalizedDistance, 2); // Apply curve
 
             // --- Shadow Calculations ---
-            const maxBlur = 5;
-            const blurRadius = maxBlur * normalizedDistance;
             const maxOffsetIncrease = 20;
             const baseOffsetX = 2;
             const totalOffsetXMagnitude = baseOffsetX + maxOffsetIncrease * normalizedDistance;
@@ -57,12 +55,11 @@ export function useMouseReactiveStyles(containerRef: RefObject<HTMLDivElement | 
             }
 
             // Update CSS variables for shadow
-            containerRef.current.style.setProperty('--text-shadow-blur-radius', `${blurRadius}px`);
             containerRef.current.style.setProperty('--text-shadow-offset-x', `${finalOffsetX}px`);
             containerRef.current.style.setProperty('--text-shadow-offset-y', `${finalOffsetY}px`);
 
             // --- Skew Calculations ---
-            const maxSkew = 3; // Max skew angle in degrees
+            const maxSkew = 2; // Max skew angle in degrees
 
             // Avoid division by zero if window dimensions are zero
             const deltaXRatio = centerX === 0 ? 0 : Math.abs(deltaX / centerX);

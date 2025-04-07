@@ -15,7 +15,7 @@
   --max-width: 64rem;
   --gap: 2rem;
 
-  --morphing-text-color:#e4dfe3ff;
+  --morphing-text-color:rgb(0, 0, 0);
   --morphing-text-color-shadow: rgb(14, 0, 102);
   --accent-color: #eaffa3;
   --letter-muted-color: #2d3834;
@@ -29,9 +29,7 @@
   --gradient-end-color: rgb(0, 44, 37);
 
   --noise-opacity: 0.1;
- 
-  --morphing-text-color:#47423eff;
-  --moon-color: #e4dfe3ff;
+   --moon-color: #e4dfe3ff;
 }
 
 
@@ -62,7 +60,7 @@ strong {
   position: relative;
 }
 
-body::before {
+/* body::before {
   content: '';
   position: fixed;
   top: 0;
@@ -77,7 +75,7 @@ body::before {
   transform:translate3d(0,0,0);
   pointer-events: none;
   z-index: 1;
-}
+} */
 
 .fixed-background {
   background: var(--gradient-end-color);

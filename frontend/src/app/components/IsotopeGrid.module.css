@@ -88,4 +88,7 @@
   .gridItem.expanded {
     width: 75%;
   }
+  .imageContainer img {
+    box-shadow: none;
+  }
 }
