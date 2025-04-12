@@ -40,7 +40,7 @@ export default function Home() {
       <div className="h-screen" />
       
       {/* Content */}
-      <div className="relative content-text latin-font">
+      <div className="relative content-text latin-font p-8">
         {/* About section with vertically centered content */}
         <section id="about" className="min-h-screen flex items-center justify-center">
           <div className="max-w-4xl mx-auto">
