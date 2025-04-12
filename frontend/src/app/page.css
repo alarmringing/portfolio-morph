@@ -15,23 +15,18 @@
   --max-width: 64rem;
   --gap: 2rem;
 
-  --morphing-text-color:rgb(0, 44, 37);
+  --morphing-text-color:#1c3737;
+  --morphing-text-color:#4a5f5f;
+  --morphing-text-color:#041414;
+
+
   --morphing-text-color-shadow: rgb(14, 0, 102);
   --letter-muted-color: #2d3834;
   --accent-color: #eaffa3;
   --primary-color: #e5bdff;
   --gradient-end-color: rgb(0, 44, 37);
-  --gradient-begin-color:  #727492;
-
-
   --gradient-middle-color: #3c6245;
-  --morphing-text-color:rgb(0, 44, 37);
-  --morphing-text-color-shadow: rgb(14, 0, 102);
-  
-
-
-  --noise-opacity: 0.1;
-   --moon-color: #e4dfe3ff;
+  --gradient-begin-color:  #727492;
 }
 
 
@@ -58,9 +53,9 @@ strong {
 .gradient-background {
   /* Create a linear gradient that completes within 100vh */
   background:
-  radial-gradient(ellipse closest-side at center,
+  radial-gradient(ellipse,
     var(--morphing-text-color-shadow) calc(var(--circle-size) * 0.1),
-    transparent calc(var(--circle-size))
+    transparent calc(var(--circle-size) * 0.75)
   );
   position: fixed;
 }

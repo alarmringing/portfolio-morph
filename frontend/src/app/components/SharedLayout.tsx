@@ -45,6 +45,8 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   const [textMorphScale, setTextMorphScale] = useState(1.5); // Default scale
   const [circleSize, setCircleSize] = useState(100); // Initial value
 
+  const isHomepage = pathname === '/';
+
   useEffect(() => {
     setHasMounted(true);
     // Check for Safari only after mounting on the client
@@ -105,7 +107,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   }, []);
 
   useEffect(() => {
-    if (pathname === '/' && pendingScroll) {
+    if (isHomepage && pendingScroll) {
       const section = document.getElementById(pendingScroll);
       if (section && navbarRef.current) {
         const navbarHeight = navbarRef.current.offsetHeight;
@@ -128,7 +130,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
 
   const scrollToSection = useCallback((sectionId: string) => {
     // If not on homepage, handle exit transition first
-    if (pathname !== '/') {
+    if (!isHomepage) {
       setPendingScroll(sectionId); // Still set pending scroll target
       handlePageExit(() => { // <-- Now defined before use
         router.push('/'); // <-- Navigate in the callback
@@ -159,11 +161,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   return (
     <div>
       {/* Spacer to push content below viewport */}
-      <div className="h-screen linear-gradient-background w-full"  />
-
-      {/* <div 
-        className="h-screen linear-gradient-background w-full"
-      /> */}
+      { isHomepage && <div className="h-screen linear-gradient-background w-full"  />}  
 
       <div 
         className="fixed top-0 left-0 w-full h-full"
@@ -181,15 +179,15 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
                 { text: 'ジヒ', font: 'PottaOne, serif', glyphType: GlyphType.J },
                 { text: '智熙', font: 'PottaOne, serif', glyphType: GlyphType.C }
               ]} 
-              blurAmount={scrollProgress * 15}
+              blurAmount={0 + scrollProgress * 15}
               width={80}
               scale={textMorphScale}
               defaultFont='NotoSerifCJK, serif'
               isPortrait={isPortrait}
               textColor={morphingTextColor}
             />
-          </div>
         </div>
+      </div>
 
       <div ref={navbarRef} className="fixed top-0 w-full z-30">
         <Navbar 
