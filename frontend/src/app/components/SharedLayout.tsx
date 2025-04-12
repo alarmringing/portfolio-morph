@@ -6,7 +6,6 @@ import Navbar from './Navbar';
 import { GlyphType } from '../utils/textUtils';
 import { clamp } from 'three/src/math/MathUtils.js';
 import { usePathname, useRouter } from 'next/navigation';
-import { TRANSITION_DURATION_S } from '../utils/transitions';
 import '../page.css';
 import '../fonts.css';
 import { IS_SAFARI } from '../utils/browserUtils';
@@ -18,6 +17,7 @@ interface TransitionContextType {
 
 // Create the context
 const TransitionContext = createContext<TransitionContextType | undefined>(undefined);
+const TRANSITION_DURATION_S = 0.4;
 
 // Custom hook to use the context
 export const useTransition = () => {
@@ -132,10 +132,10 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     // If not on homepage, handle exit transition first
     if (!isHomepage) {
       setPendingScroll(sectionId); // Still set pending scroll target
-      handlePageExit(() => { // <-- Now defined before use
-        router.push('/'); // <-- Navigate in the callback
+      handlePageExit(() => { 
+        router.push('/');
       });
-      return; // Return after initiating exit
+      return;
     }
     
     // Already on homepage, scroll directly
@@ -150,8 +150,6 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   }, [pathname, router, handlePageExit]); // Keep handlePageExit in dependency array
 
   const morphingTextColor = `color-mix(in srgb, var(--morphing-text-color) ${100 - (scrollProgress * 100)}%, var(--letter-muted-color) ${scrollProgress * 100}%)`;
-  // Remove circleSize calculation from here as it's now in state
-  // const circleSize = 100 - (scrollProgress * 100);
   const transitionClasses = [
     'transition-fade', // Base class with opacity 0, transition none
     hasMounted ? 'transition-fade-mounted' : '', // Add transition after mount
