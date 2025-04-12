@@ -7,7 +7,7 @@ import gsap from 'gsap';
  * Custom hook to apply mouse-reactive styles (shadow, skew) to a container element.
  * @param containerRef - A React ref object pointing to the container HTMLDivElement.
  */
-export function useMouseReactiveStyles(containerRef: RefObject<HTMLDivElement | null>) {
+export function useMouseReactiveTextStyle(containerRef: RefObject<HTMLDivElement | null>) {
     // Ref to hold the current smoothed mouse coordinates for GSAP animation
     const smoothedMouseRef = useRef({ x: 0, y: 0 });
 

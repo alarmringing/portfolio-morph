@@ -3,7 +3,7 @@
 import { useRef, useEffect } from 'react'
 import styles from './TextMorphEffect.module.css'
 import { GlyphType, isCJKGlyph } from '../utils/textUtils';
-import { useMouseReactiveStyles } from '../hooks/useMouseReactiveStyles';
+import { useMouseReactiveTextStyle } from '../hooks/useMouseReactiveTextStyle';
 import { IS_SAFARI } from '../utils/browserUtils';
 
 // Define a custom type for our style object that includes textOrientation
@@ -198,7 +198,7 @@ export default function TextMorphEffect({
   }, [normalizedTexts, morphTime, cooldownTime, isPortrait, defaultFont, width]);
 
   // Use the custom hook for mouse reactivity
-  useMouseReactiveStyles(containerRef);
+  useMouseReactiveTextStyle(containerRef);
     
   const containerStyle = {
     scale: scale,
