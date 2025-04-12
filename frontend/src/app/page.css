@@ -15,18 +15,20 @@
   --max-width: 64rem;
   --gap: 2rem;
 
-  --morphing-text-color:rgb(0, 0, 0);
+  --morphing-text-color:rgb(0, 44, 37);
   --morphing-text-color-shadow: rgb(14, 0, 102);
-  --accent-color: #eaffa3;
   --letter-muted-color: #2d3834;
+  --accent-color: #eaffa3;
   --primary-color: #e5bdff;
+  --gradient-end-color: rgb(0, 44, 37);
+  --gradient-begin-color:  #727492;
 
 
-  --gradient-begin-color: #47423eff;
+  --gradient-middle-color: #3c6245;
+  --morphing-text-color:rgb(0, 44, 37);
+  --morphing-text-color-shadow: rgb(14, 0, 102);
   
 
-  --gradient-middle-color: rgb(14, 0, 102);
-  --gradient-end-color: rgb(0, 44, 37);
 
   --noise-opacity: 0.1;
    --moon-color: #e4dfe3ff;
@@ -47,22 +49,20 @@ strong {
   font-weight: bold; 
 }
 
+.linear-gradient-background {
+  background:  linear-gradient(var(--gradient-begin-color), var(--gradient-middle-color), var(--gradient-end-color));
+  position: absolute;
+}
+
 /* Container for the full gradient background */
 .gradient-background {
   /* Create a linear gradient that completes within 100vh */
-  background: 
-    linear-gradient(to bottom,  
-      var(--gradient-begin-color) 0vh,      /* Start color at top */
-      var(--gradient-middle-color) 60vh,     /* Middle color at half viewport */
-      var(--gradient-end-color) 100vh,       /* End color at full viewport */
-      var(--gradient-end-color) 100%         /* Maintain end color for rest of content */
-    );
-  position: relative;
-}
-
-.fixed-background {
-  background: var(--gradient-end-color);
-  position: relative;
+  background:
+  radial-gradient(ellipse closest-side at center,
+    var(--morphing-text-color-shadow) calc(var(--circle-size) * 0.1),
+    transparent calc(var(--circle-size))
+  );
+  position: fixed;
 }
 
 a {

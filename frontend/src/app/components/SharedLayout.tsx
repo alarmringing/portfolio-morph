@@ -43,6 +43,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const previousPathname = useRef(pathname);
   const [textMorphScale, setTextMorphScale] = useState(1.5); // Default scale
+  const [circleSize, setCircleSize] = useState(100); // Initial value
 
   useEffect(() => {
     setHasMounted(true);
@@ -75,6 +76,8 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
     const handleScroll = () => {
       if (pathname !== '/') {
         setScrollProgress(1.0);
+        // Set circleSize directly when not on homepage
+        setCircleSize(0); // Or whatever final state you want
         return;
       }
       const aboutSection = window.innerHeight;
@@ -82,12 +85,13 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
       let progress = Math.min(scrollPosition / aboutSection, 1);
       progress = clamp(progress, 0, 1.0);
       setScrollProgress(progress);
+      setCircleSize(100 - (progress * 100));
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll();
+    handleScroll(); // Initial calculation
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [pathname]);
+  }, [pathname]); // Added circleSize calculation here
 
   useEffect(() => {
     const checkOrientation = () => {
@@ -144,10 +148,8 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   }, [pathname, router, handlePageExit]); // Keep handlePageExit in dependency array
 
   const morphingTextColor = `color-mix(in srgb, var(--morphing-text-color) ${100 - (scrollProgress * 100)}%, var(--letter-muted-color) ${scrollProgress * 100}%)`;
-
-  const backgroundClass = pathname === '/' ? 'gradient-background' : 'fixed-background';
-
-  // Determine transition class based on state
+  // Remove circleSize calculation from here as it's now in state
+  // const circleSize = 100 - (scrollProgress * 100);
   const transitionClasses = [
     'transition-fade', // Base class with opacity 0, transition none
     hasMounted ? 'transition-fade-mounted' : '', // Add transition after mount
@@ -155,12 +157,23 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   ].filter(Boolean).join(' '); // Filter out empty strings and join
 
   return (
-    <div className={backgroundClass}>
+    <div>
+      {/* Spacer to push content below viewport */}
+      <div className="h-screen linear-gradient-background w-full"  />
+
+      {/* <div 
+        className="h-screen linear-gradient-background w-full"
+      /> */}
+
       <div 
-        className="fixed left-0 w-full"
+        className="fixed top-0 left-0 w-full h-full"
       >
-        <div className="relative w-full h-full">
-          <div style={{ zIndex: 2}}>
+        <div 
+        className="h-screen gradient-background w-full"
+        style={{ '--circle-size': `${circleSize}%` } as React.CSSProperties} // Pass circleSize as CSS variable
+        />
+
+          <div className="z-1">
             <TextMorphEffect  
               texts={[
                 { text: 'Jihee', font: 'BagelFatOne, monospace', glyphType: GlyphType.L },
@@ -177,7 +190,6 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
             />
           </div>
         </div>
-      </div>
 
       <div ref={navbarRef} className="fixed top-0 w-full z-30">
         <Navbar 
@@ -188,13 +200,14 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
 
       <TransitionContext.Provider value={{ handlePageExit }}>
         <div 
-          className={`relative content-text latin-font ${transitionClasses}`}
+          className={`content-text latin-font ${transitionClasses}`}
         >
-          <div className="relative z-10 bg-transparent p-8">
+          <div className="relative bg-transparent">
             {children}
           </div>
         </div>
       </TransitionContext.Provider>
+      
     </div>
   );
 } 
