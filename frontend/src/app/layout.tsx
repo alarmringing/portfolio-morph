@@ -76,6 +76,31 @@ export default async function RootLayout({ // <-- Make the function async
 
   return (
     <html lang="en">
+      <head>
+        {/* Preload critical fonts */}
+        <link 
+          rel="preload" 
+          href="/fonts/PottaOne-subset.ttf" 
+          as="font" 
+          type="font/truetype" 
+          crossOrigin="anonymous" 
+        />
+        <link 
+          rel="preload" 
+          href="/fonts/BagelFatOne-subset.ttf" 
+          as="font" 
+          type="font/truetype" 
+          crossOrigin="anonymous" 
+        />
+        <link 
+          rel="preload" 
+          href="/fonts/SyneMono-Regular.ttf" 
+          as="font" 
+          type="font/truetype" 
+          crossOrigin="anonymous" 
+        />
+        {/* Add other head elements here if needed */}
+      </head>
       <body>
         {/* Pass fetched projects as a prop */}
         <ProjectsProvider initialProjects={allProjects}>
