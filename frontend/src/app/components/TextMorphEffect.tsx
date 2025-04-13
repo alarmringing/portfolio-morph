@@ -197,8 +197,9 @@ export default function TextMorphEffect({
     };
   }, [normalizedTexts, morphTime, cooldownTime, isPortrait, defaultFont, width]);
 
-  // Use the custom hook for mouse reactivity
-  useMouseReactiveTextStyle(containerRef);
+  if (!IS_SAFARI) {
+    useMouseReactiveTextStyle(containerRef);
+  }
     
   const containerStyle = {
     scale: scale,
