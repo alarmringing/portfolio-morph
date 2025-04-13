@@ -197,9 +197,9 @@ export default function TextMorphEffect({
     };
   }, [normalizedTexts, morphTime, cooldownTime, isPortrait, defaultFont, width]);
 
-  if (!IS_SAFARI) {
-    useMouseReactiveTextStyle(containerRef);
-  }
+  // Call the hook unconditionally, but pass the condition as an argument
+  // (You'll need to update the hook definition to accept this)
+  useMouseReactiveTextStyle(containerRef, !IS_SAFARI);
     
   const containerStyle = {
     scale: scale,

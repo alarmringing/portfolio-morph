@@ -4,10 +4,16 @@ import { useRef, useEffect, RefObject } from 'react';
 import gsap from 'gsap';
 
 /**
- * Custom hook to apply mouse-reactive styles (shadow, skew) to a container element.
- * @param containerRef - A React ref object pointing to the container HTMLDivElement.
+ * A custom hook that applies dynamic text styling based on mouse position.
+ * It updates CSS variables for text shadow and applies a skew transform.
+ *
+ * @param containerRef Ref object pointing to the container element.
+ * @param enabled Boolean flag to enable or disable the effect.
  */
-export function useMouseReactiveTextStyle(containerRef: RefObject<HTMLDivElement | null>) {
+export function useMouseReactiveTextStyle(
+    containerRef: RefObject<HTMLElement | null>,
+    enabled: boolean = true // Default to true if not provided
+) {
     // Ref to hold the current smoothed mouse coordinates for GSAP animation
     const smoothedMouseRef = useRef({ x: 0, y: 0 });
 
@@ -16,6 +22,20 @@ export function useMouseReactiveTextStyle(containerRef: RefObject<HTMLDivElement
         // Ensure ref is current and we are in a browser environment
         if (!containerRef.current || typeof window === 'undefined') return;
 
+        // If the effect is not enabled, do nothing and clean up if necessary
+        if (!enabled) {
+            // Ensure any existing tweens are killed and styles are reset if disabling
+            gsap.killTweensOf(smoothedMouseRef.current);
+            if (containerRef.current) {
+               containerRef.current.style.removeProperty('--text-shadow-offset-x');
+               containerRef.current.style.removeProperty('--text-shadow-offset-y');
+               containerRef.current.style.transform = 'none'; // Reset transform
+            }
+            // Remove event listener if it was potentially added before disabling
+            // (This part might need refinement based on how enable toggling is handled mid-lifecycle)
+            // window.removeEventListener('mousemove', handleMouseMove); // Be cautious if handleMouseMove isn't defined here
+            return; // Exit early
+        }
         // Set initial position to center only on the client
         smoothedMouseRef.current = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
@@ -109,5 +129,5 @@ export function useMouseReactiveTextStyle(containerRef: RefObject<HTMLDivElement
                currentRef.style.transform = 'none'; // Reset transform
             }
         };
-    }, [containerRef]); // Re-run the effect if the containerRef itself changes
+    }, [containerRef, enabled]); // Re-run the effect if the containerRef or enabled status changes
 } 
