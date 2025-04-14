@@ -44,6 +44,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   const previousPathname = useRef(pathname);
   const [textMorphScale, setTextMorphScale] = useState(1.5); // Default scale
   const [circleSize, setCircleSize] = useState(100); // Initial value
+  const [areFontsLoaded, setAreFontsLoaded] = useState(false); // State for font loading
 
   const isHomepage = pathname === '/';
 
@@ -54,6 +55,27 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
       setTextMorphScale(3.5);
     }
   }, []);
+
+  // Effect to load fonts
+  useEffect(() => {
+    // Ensure running on client-side where document.fonts is available
+    if (typeof document !== 'undefined' && document.fonts) {
+      Promise.all([
+        document.fonts.load('1em BagelFatOne'), // Specify size and family
+        document.fonts.load('1em PottaOne')      // Specify size and family
+      ]).then(() => {
+        setAreFontsLoaded(true);
+      }).catch(err => {
+        console.error('Font loading failed:', err);
+        // Fallback: Still show the text even if fonts fail to load after timeout
+        setAreFontsLoaded(true);
+      });
+    } else {
+      // Fallback if document.fonts is not available (SSR or old browser)
+      // Assume fonts are loaded or proceed without waiting
+      setAreFontsLoaded(true);
+    }
+  }, []); // Run once on mount
 
   useEffect(() => {
     if (!hasMounted) return;
@@ -161,7 +183,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
       {/* Spacer to push content below viewport */}
       { isHomepage && <div className="h-screen linear-gradient-background w-full"  />}  
 
-      <div 
+      <div
         className="fixed top-0 left-0 w-full h-full"
       >
         <div 
@@ -169,14 +191,21 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
         style={{ '--circle-size': `${circleSize}%` } as React.CSSProperties} // Pass circleSize as CSS variable
         />
 
-          <div className="z-1">
-            <TextMorphEffect  
+          {/* Apply fade-in effect to this wrapper div */}
+          <div
+            className="z-1"
+            style={{
+              opacity: areFontsLoaded ? 1 : 0,
+              transition: 'opacity 0.5s ease-in-out' // Adjust duration/easing as needed
+            }}
+          >
+            <TextMorphEffect
               texts={[
                 { text: 'Jihee', font: 'BagelFatOne, monospace', glyphType: GlyphType.L },
                 { text: '지희', font: 'BagelFatOne, serif', glyphType: GlyphType.K },
                 { text: 'ジヒ', font: 'PottaOne, serif', glyphType: GlyphType.J },
                 { text: '智熙', font: 'PottaOne, serif', glyphType: GlyphType.C }
-              ]} 
+              ]}
               blurAmount={0 + scrollProgress * 15}
               width={80}
               scale={textMorphScale}
@@ -184,18 +213,18 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
               isPortrait={isPortrait}
               textColor={morphingTextColor}
             />
-        </div>
+          </div>
       </div>
 
       <div ref={navbarRef} className="fixed top-0 w-full z-30">
-        <Navbar 
+        <Navbar
           onAboutClick={() => scrollToSection('about')}
           onProjectsClick={() => scrollToSection('projects')}
         />
       </div>
 
       <TransitionContext.Provider value={{ handlePageExit }}>
-        <div 
+        <div
           className={`content-text latin-font ${transitionClasses}`}
         >
           <div className="relative bg-transparent">
@@ -203,7 +232,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
           </div>
         </div>
       </TransitionContext.Provider>
-      
+
     </div>
   );
 } 
