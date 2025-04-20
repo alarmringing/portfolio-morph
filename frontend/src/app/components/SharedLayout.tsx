@@ -8,7 +8,7 @@ import { clamp } from 'three/src/math/MathUtils.js';
 import { usePathname, useRouter } from 'next/navigation';
 import '../page.css';
 import '../fonts.css';
-import { IS_SAFARI } from '../utils/browserUtils';
+import { IS_WEBKIT } from '../utils/browserUtils';
 
 // Define the context type
 interface TransitionContextType {
@@ -51,7 +51,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
   useEffect(() => {
     setHasMounted(true);
     // Check for Safari only after mounting on the client
-    if (IS_SAFARI) {
+    if (IS_WEBKIT) {
       setTextMorphScale(3.5);
     }
   }, []);

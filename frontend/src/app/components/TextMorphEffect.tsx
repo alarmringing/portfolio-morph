@@ -4,7 +4,7 @@ import { useRef, useEffect } from 'react'
 import styles from './TextMorphEffect.module.css'
 import { GlyphType, isCJKGlyph } from '../utils/textUtils';
 import { useMouseReactiveTextStyle } from '../hooks/useMouseReactiveTextStyle';
-import { IS_SAFARI } from '../utils/browserUtils';
+import { IS_WEBKIT } from '../utils/browserUtils';
 
 // Define a custom type for our style object that includes textOrientation
 interface TextStyleProps {
@@ -79,7 +79,7 @@ export default function TextMorphEffect({
         if (glyphType === GlyphType.K) {
           // korean vertical letter spacing should only be applied on non- safari browsers
           // Check isClient to prevent hydration mismatch
-          const reduceVerticalSpacing =  IS_SAFARI ? { letterSpacing: '0px', top: '0px' } : { letterSpacing: '-0.4em', top: '-0.2em' };
+          const reduceVerticalSpacing =  IS_WEBKIT ? { letterSpacing: '0px', top: '0px' } : { letterSpacing: '-0.4em', top: '-0.2em' };
           style = {
             ...style, 
             ...reduceVerticalSpacing
@@ -199,7 +199,7 @@ export default function TextMorphEffect({
 
   // Call the hook unconditionally, but pass the condition as an argument
   // (You'll need to update the hook definition to accept this)
-  useMouseReactiveTextStyle(containerRef, !IS_SAFARI);
+  useMouseReactiveTextStyle(containerRef, !IS_WEBKIT);
     
   const containerStyle = {
     scale: scale,
